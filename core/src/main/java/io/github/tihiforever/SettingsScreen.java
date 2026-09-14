@@ -14,7 +14,7 @@ public class SettingsScreen extends ScreenAdapter {
     @Override
     public void render(float delta){
         // Clear the screen
-        Gdx.gl.glClearColor(0.15f, 0.15f, 0.15f, 1);
+        Gdx.gl.glClearColor(0.25f, 0.25f, 0.15f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Render Title

@@ -30,6 +30,9 @@ public class GameScreen extends ScreenAdapter {
         if(Gdx.input.isKeyJustPressed(Input.Keys.G)){
             screenManager.setScreen(Screen_Type.GAME_OVER);
         }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.J)){
+            screenManager.setScreen(Screen_Type.JOB_SCREEN);
+        }
     }
 
     @Override

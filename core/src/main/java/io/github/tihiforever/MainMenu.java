@@ -15,12 +15,12 @@ public class MainMenu extends ScreenAdapter {
     @Override
     public void render(float delta){
         // Clear the screen
-        Gdx.gl.glClearColor(0.15f, 0.15f, 0.15f, 1);
+        Gdx.gl.glClearColor(0.15f, 0.15f, 0.25f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Buttons here
 
-        if(!Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.S)){
+        if(Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ENTER)){
             screenManager.setScreen(Screen_Type.GAME_SCREEN);
         }
         if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.S)) {
