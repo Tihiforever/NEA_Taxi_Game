@@ -1,32 +1,52 @@
 package io.github.tihiforever;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
+    private ScreenManager screenManager;
+    private ShapeRenderer sr;
     private SpriteBatch batch;
-    private Texture image;
+    private BitmapFont font;
 
     @Override
     public void create() {
+        sr = new ShapeRenderer();
         batch = new SpriteBatch();
-        image = new Texture("libgdx.png");
+        font = new BitmapFont();
+
+        screenManager = new ScreenManager(this);
+        screenManager.setScreen(Screen_Type.TITLE);
     }
 
     @Override
     public void render() {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        batch.begin();
-        batch.draw(image, 140, 210);
-        batch.end();
+        screenManager.render(Gdx.graphics.getDeltaTime());
     }
 
     @Override
     public void dispose() {
         batch.dispose();
-        image.dispose();
+        sr.dispose();
+        font.dispose();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        screenManager.resize(width, height);
+    }
+
+    @Override
+    public void pause() {
+        screenManager.pause();
+    }
+
+    @Override
+    public void resume() {
+        screenManager.resume();
     }
 }
