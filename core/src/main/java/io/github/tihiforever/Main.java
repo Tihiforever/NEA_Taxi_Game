@@ -1,7 +1,6 @@
 package io.github.tihiforever;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -35,18 +34,7 @@ public class Main extends ApplicationAdapter {
         font.dispose();
     }
 
-    @Override
-    public void resize(int width, int height) {
-        screenManager.resize(width, height);
-    }
-
-    @Override
-    public void pause() {
-        screenManager.pause();
-    }
-
-    @Override
-    public void resume() {
-        screenManager.resume();
-    }
+    public SpriteBatch getBatch() {return batch;}
+    public BitmapFont getFont() {return font;}
+    public ShapeRenderer getSr() {return sr;}
 }

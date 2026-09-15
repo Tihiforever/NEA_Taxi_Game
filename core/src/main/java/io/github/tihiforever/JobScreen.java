@@ -1,6 +1,7 @@
 package io.github.tihiforever;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 
@@ -19,7 +20,7 @@ public class JobScreen extends ScreenAdapter {
 
         // Render Title
 
-        if(Gdx.input.isTouched()){
+        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
             screenManager.setScreen(Screen_Type.GAME_SCREEN);
         }
     }

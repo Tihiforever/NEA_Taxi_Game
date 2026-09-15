@@ -6,6 +6,9 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 
 public class GameScreen extends ScreenAdapter {
+    // All initialiser's
+
+    //screen stuff
     private final ScreenManager screenManager;
     private final Main main;
 

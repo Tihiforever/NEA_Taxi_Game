@@ -22,10 +22,10 @@ public class ScreenManager{
         // initalise the requestd screen based on your enum
         switch (screenType) {
             case TITLE:
-                currentScreen = new TitleScreen(this);
+                currentScreen = new TitleScreen(this, main);
                 break;
             case MAIN_MENU:
-                currentScreen = new MainMenu(this);
+                currentScreen = new MainMenu(this, main);
                 break;
             case JOB_SCREEN:
                 currentScreen = new JobScreen(this);
@@ -37,7 +37,10 @@ public class ScreenManager{
                 currentScreen = new SettingsScreen(this);
                 break;
             case GAME_OVER:
-                currentScreen = new GameOverScreen(this);
+                currentScreen = new GameOverScreen(this, main);
+                break;
+            case LEADERBOARD:
+                currentScreen = new LeaderboardScreen(this);
                 break;
         }
 
