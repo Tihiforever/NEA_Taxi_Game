@@ -28,7 +28,7 @@ public class GameOverScreen extends ScreenAdapter {
 
         main.getFont().getData().setScale(6f);
         main.getFont().setColor(Color.WHITE);
-        main.getFont().draw(main.getBatch(), "GAME OVER", screenWidth / 2f - 240f, screenHeight / 2f);
+        main.getFont().draw(main.getBatch(), "GAME OVER", (screenWidth / 2f) - 270f, (screenHeight / 2f)+50f);
         main.getFont().getData().setScale(1f);
 
         main.getBatch().end();
