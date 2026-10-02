@@ -8,10 +8,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 
 public class SettingsScreen extends ScreenAdapter {
     private final ScreenManager screenManager;
-    private OrthographicCamera camera;
+    private Main main;
 
-    public SettingsScreen(ScreenManager screenManager) {
+    private OrthographicCamera camera;
+    public SettingsScreen(ScreenManager screenManager, Main main) {
         this.screenManager = screenManager;
+        this.main = main;
     }
 
     @Override
@@ -19,7 +21,7 @@ public class SettingsScreen extends ScreenAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
-        
+
     @Override
     public void render(float delta){
         // Clear the screen

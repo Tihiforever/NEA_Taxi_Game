@@ -28,19 +28,19 @@ public class ScreenManager{
                 currentScreen = new MainMenu(this, main);
                 break;
             case JOB_SCREEN:
-                currentScreen = new JobScreen(this);
+                currentScreen = new JobScreen(this, main);
                 break;
             case GAME_SCREEN:
                 currentScreen = new GameScreen(this, main);
                 break;
             case SETTINGS:
-                currentScreen = new SettingsScreen(this);
+                currentScreen = new SettingsScreen(this, main);
                 break;
             case GAME_OVER:
                 currentScreen = new GameOverScreen(this, main);
                 break;
             case LEADERBOARD:
-                currentScreen = new LeaderboardScreen(this);
+                currentScreen = new LeaderboardScreen(this, main);
                 break;
         }
 

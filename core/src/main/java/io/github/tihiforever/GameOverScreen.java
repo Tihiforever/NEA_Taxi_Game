@@ -8,14 +8,18 @@ import com.badlogic.gdx.graphics.GL20;
 
 public class GameOverScreen extends ScreenAdapter {
     private final ScreenManager screenManager;
-    private Main main;
+    private final Main main;
+    private final InputHandeler inputHandeler;
 
-    private float screenWidth = Gdx.graphics.getWidth();
-    private float screenHeight = Gdx.graphics.getHeight();
+    private final float screenWidth = Gdx.graphics.getWidth();
+    private final float screenHeight = Gdx.graphics.getHeight();
 
-    public GameOverScreen(ScreenManager screenManager,Main main) {
+    public GameOverScreen(ScreenManager screenManager, Main main) {
         this.screenManager = screenManager;
         this.main = main;
+
+        inputHandeler = new InputHandeler();
+        Gdx.input.setInputProcessor(inputHandeler);
     }
 
     @Override
@@ -28,9 +32,11 @@ public class GameOverScreen extends ScreenAdapter {
 
         main.getFont().getData().setScale(6f);
         main.getFont().setColor(Color.WHITE);
-        main.getFont().draw(main.getBatch(), "GAME OVER", (screenWidth / 2f) - 270f, (screenHeight / 2f)+50f);
-        main.getFont().getData().setScale(1f);
-
+        main.getFont().draw(main.getBatch(), "GAME OVER", (screenWidth / 2f) - 270f, screenHeight - 50f);
+        main.getFont().getData().setScale(3f);
+        main.getFont().draw(main.getBatch(), "ENTER YOUR NAME", (screenWidth/2f) - 215f, screenHeight - 180f);
+        main.getFont().getData().setScale(8f);
+        main.getFont().draw(main.getBatch(), inputHandeler.getNameDisplay(), (screenWidth /2f) - 150f, screenHeight - 300f);
         main.getBatch().end();
 
 

@@ -7,9 +7,11 @@ import com.badlogic.gdx.graphics.GL20;
 
 public class JobScreen extends ScreenAdapter {
     private final ScreenManager screenManager;
+    private Main main;
 
-    public JobScreen(ScreenManager screenManager) {
+    public JobScreen(ScreenManager screenManager, Main main) {
         this.screenManager = screenManager;
+        this.main = main;
     }
 
     @Override
