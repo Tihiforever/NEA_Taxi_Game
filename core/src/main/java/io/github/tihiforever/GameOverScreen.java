@@ -5,6 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class GameOverScreen extends ScreenAdapter {
     private final ScreenManager screenManager;
@@ -13,6 +15,8 @@ public class GameOverScreen extends ScreenAdapter {
 
     private final float screenWidth = Gdx.graphics.getWidth();
     private final float screenHeight = Gdx.graphics.getHeight();
+
+    private int playerScore = 500;
 
     public GameOverScreen(ScreenManager screenManager, Main main) {
         this.screenManager = screenManager;
@@ -41,8 +45,23 @@ public class GameOverScreen extends ScreenAdapter {
 
 
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
+            writeToFile(inputHandeler.getPlayerName(), playerScore);
             screenManager.setScreen(Screen_Type.TITLE);
         }
+    }
+
+    private void writeToFile(String name, int score){
+        try {
+            FileWriter writer = new FileWriter("leaderboard.txt", true);
+
+            writer.write(name + "," + score + "\n");
+
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

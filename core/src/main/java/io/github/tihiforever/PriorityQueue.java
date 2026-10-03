@@ -47,7 +47,7 @@ public class PriorityQueue {
         return removedData;
     }
 
-    public String getName(PlayerData dataEntry){return dataEntry.name;}
+    public String getName(int dataEntry){return elements.get(dataEntry).name;}
 
-    public int getScore(PlayerData dataEntry){return dataEntry.score;}
+    public int getScore(int dataEntry){return elements.get(dataEntry).score;}
 }
