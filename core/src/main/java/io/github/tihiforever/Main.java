@@ -12,6 +12,8 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private BitmapFont font;
 
+    private Difficulty difficulty;
+
     @Override
     public void create() {
         sr = new ShapeRenderer();
@@ -34,7 +36,17 @@ public class Main extends ApplicationAdapter {
         font.dispose();
     }
 
+    @Override
+    public void resize(int width, int height) {
+        batch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
+        sr.getProjectionMatrix().setToOrtho2D(0,0,width,height);
+        screenManager.resize(width, height);
+    }
+
     public SpriteBatch getBatch() {return batch;}
     public BitmapFont getFont() {return font;}
     public ShapeRenderer getSr() {return sr;}
+
+    public Difficulty getDifficulty() {return difficulty;}
+    public void setDifficulty(Difficulty difficulty) {this.difficulty = difficulty;}
 }

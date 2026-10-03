@@ -13,9 +13,6 @@ public class GameOverScreen extends ScreenAdapter {
     private final Main main;
     private final InputHandeler inputHandeler;
 
-    private final float screenWidth = Gdx.graphics.getWidth();
-    private final float screenHeight = Gdx.graphics.getHeight();
-
     private int playerScore = 500;
 
     public GameOverScreen(ScreenManager screenManager, Main main) {
@@ -28,6 +25,9 @@ public class GameOverScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta){
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+
         // Clear the screen
         Gdx.gl.glClearColor(0f, 0f, 0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

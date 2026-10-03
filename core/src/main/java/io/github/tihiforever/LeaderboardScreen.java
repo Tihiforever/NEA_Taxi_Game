@@ -11,11 +11,10 @@ import java.io.IOException;
 
 public class LeaderboardScreen extends ScreenAdapter {
     private final ScreenManager screenManager;
-    private Main main;
+    private final Main main;
+    private final InputHandeler inputHandeler;
 
     private PriorityQueue playerData;
-    private float screenWidth;
-    private float screenHeight;
 
     public LeaderboardScreen(ScreenManager screenManager, Main main) {
         this.screenManager = screenManager;
@@ -23,12 +22,15 @@ public class LeaderboardScreen extends ScreenAdapter {
 
         playerData = readFromFile();
 
-        screenWidth = Gdx.graphics.getWidth();
-        screenHeight = Gdx.graphics.getHeight();
+        inputHandeler = new InputHandeler();
+        Gdx.input.setInputProcessor(inputHandeler);
     }
 
     @Override
     public void render(float delta){
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+
         // Clear the screen
         Gdx.gl.glClearColor(1f, 0f, 0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -46,15 +48,16 @@ public class LeaderboardScreen extends ScreenAdapter {
         for (int i = 0; i < playerData.length() && i < 10; i++) {
             float y = screenHeight - 180f - (i * spacing);
 
-            main.getFont().draw(main.getBatch(), (i + 1) + ".", 100f, y);
-            main.getFont().draw(main.getBatch(), playerData.getName(i), 200f, y);
-            main.getFont().draw(main.getBatch(), "" + playerData.getScore(i), 550f, y);
+            main.getFont().draw(main.getBatch(), (i + 1) + ".", screenWidth/8, y);
+            main.getFont().draw(main.getBatch(), playerData.getName(i), screenWidth/4, y);
+            main.getFont().draw(main.getBatch(), "" + playerData.getScore(i), screenWidth - 300f, y);
         }
         main.getBatch().end();
 
 
-        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
+        if(inputHandeler.isMouseClicked()){
             screenManager.setScreen(Screen_Type.MAIN_MENU);
+            inputHandeler.resetMouseClick();
         }
     }
 

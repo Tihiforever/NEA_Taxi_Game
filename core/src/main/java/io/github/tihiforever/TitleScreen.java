@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class TitleScreen extends ScreenAdapter {
     private final ScreenManager screenManager;
     private final Main main;
+    private final InputHandeler inputHandeler;
 
     // Taxi position and movement variables
     private float taxiX;
@@ -20,12 +21,12 @@ public class TitleScreen extends ScreenAdapter {
     // Scale variable
     private float scale;
 
-    private float screenWidth = Gdx.graphics.getWidth();
-    private float screenHeight = Gdx.graphics.getHeight();
-
     public TitleScreen(ScreenManager screenManager, Main main) {
         this.screenManager = screenManager;
         this.main = main;
+
+        inputHandeler = new InputHandeler();
+        Gdx.input.setInputProcessor(inputHandeler);
     }
 
     @Override
@@ -38,13 +39,17 @@ public class TitleScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        // width height can change when screen size changes
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+
         //update taxi
         taxiX += taxiSpeed * delta;
 
         //update text scale
         scale = 6f;
 
-        // Reset the taxi
+        // reset the taxi
         if (taxiX > screenWidth + 100f) {
             taxiX = -100f;
         }
@@ -91,8 +96,9 @@ public class TitleScreen extends ScreenAdapter {
 
         main.getBatch().end();
 
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        if(inputHandeler.isMouseClicked()){
             screenManager.setScreen(Screen_Type.MAIN_MENU);
+            inputHandeler.resetMouseClick();
         }
     }
 }
