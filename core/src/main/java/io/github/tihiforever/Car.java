@@ -52,4 +52,22 @@ public class Car {
         speed = newSpeed;
         collisionTimer = delay;
     }
+
+    public float getX() {return x;}
+    public void setX(float x) {this.x = x;}
+
+    public float getWidth() {return width;}
+    public void setWidth(float width) {this.width = width;}
+
+    public float getY() {return y;}
+    public void setY(float y) {this.y = y;}
+
+    public float getHeight() {return height;}
+    public void setHeight(float height) {this.height = height;}
+
+    public float getRotation() {return rotation;}
+    public void setRotation(float rotation) {this.rotation = rotation;}
+
+    public float getSpeed() {return speed;}
+    public void setSpeed(float speed) {this.speed = speed;}
 }

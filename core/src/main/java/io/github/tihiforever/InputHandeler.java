@@ -2,6 +2,9 @@ package io.github.tihiforever;
 
 import com.badlogic.gdx.InputAdapter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class InputHandeler extends InputAdapter {
 
     private String playerName = "";
@@ -11,6 +14,7 @@ public class InputHandeler extends InputAdapter {
     private int mouseY;
 
     private int lastKeyPressed = -1;
+    private final Set<Integer> pressedKeys = new HashSet<>();
 
     @Override
     public boolean keyTyped(char character) {
@@ -24,8 +28,20 @@ public class InputHandeler extends InputAdapter {
     @Override
     public boolean keyDown(int keycode) {
         lastKeyPressed = keycode;
+        pressedKeys.add(keycode);
 
         return true;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        pressedKeys.remove(keycode);
+
+        return true;
+    }
+
+    public boolean isKeyPressed(int keycode) {
+        return pressedKeys.contains(keycode);
     }
 
     @Override

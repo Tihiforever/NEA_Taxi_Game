@@ -9,6 +9,7 @@ public class Taxi extends Car{
 
     public Taxi(float x, float y) {
         super(x, y);
+        rotation = 90f;
 
         inputHandeler = new InputHandeler();
         Gdx.input.setInputProcessor(inputHandeler);
@@ -17,10 +18,10 @@ public class Taxi extends Car{
     public void update(){
         float dt = Gdx.graphics.getDeltaTime();
 
-        boolean forward = inputHandeler.keyDown(Input.Keys.W) || inputHandeler.keyDown(Input.Keys.UP);
-        boolean backward = inputHandeler.keyDown(Input.Keys.S) || inputHandeler.keyDown(Input.Keys.DOWN);
-        boolean left = inputHandeler.keyDown(Input.Keys.A) || inputHandeler.keyDown(Input.Keys.LEFT);
-        boolean right = inputHandeler.keyDown(Input.Keys.D) || inputHandeler.keyDown(Input.Keys.RIGHT);
+        boolean forward = inputHandeler.isKeyPressed(Input.Keys.W) || inputHandeler.isKeyPressed(Input.Keys.UP);
+        boolean backward = inputHandeler.isKeyPressed(Input.Keys.S) || inputHandeler.isKeyPressed(Input.Keys.DOWN);
+        boolean left = inputHandeler.isKeyPressed(Input.Keys.A) || inputHandeler.isKeyPressed(Input.Keys.LEFT);
+        boolean right = inputHandeler.isKeyPressed(Input.Keys.D) || inputHandeler.isKeyPressed(Input.Keys.RIGHT);
 
 
         if (collisionTimer > 0){
@@ -72,6 +73,9 @@ public class Taxi extends Car{
         }
 
         speed = MathUtils.clamp(speed, -maxSpeed / 2f, maxSpeed);
+
+        x += MathUtils.cosDeg(rotation) * speed * dt;
+        y += MathUtils.sinDeg(rotation) * speed * dt;
 
         if (Math.abs(speed) > 10) {
             if(right) rotation += turnSpeed * steeringMultiplier * dt;
