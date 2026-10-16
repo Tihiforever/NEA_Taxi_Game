@@ -39,9 +39,15 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+
         // Clear the screen
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.15f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        main.getBatch().getProjectionMatrix().setToOrtho2D(0, 0, screenWidth, screenHeight);
+
+        main.getSr().getProjectionMatrix().setToOrtho2D(0, 0, screenWidth, screenHeight);
 
         handleInput();
         updateEntities(delta);
@@ -49,11 +55,6 @@ public class GameScreen extends ScreenAdapter {
 
         drawWorld();
         drawHud(delta);
-    }
-
-    @Override
-    public void dispose() {
-
     }
 
     private void handleInput() {
@@ -84,11 +85,30 @@ public class GameScreen extends ScreenAdapter {
         main.getBatch().setProjectionMatrix(hudCamera.combined);
 
         main.getBatch().begin();
-        main.getFont().getData().scale(1);
+        main.getFont().getData().setScale(1);
 
-        main.getFont().draw(main.getBatch(), "Taxi-Game", 20, Gdx.graphics.getHeight() - 20);
+        main.getFont().draw(main.getBatch(), "Taxi-Game" + getInfoText(), 20, Gdx.graphics.getHeight() - 20);
 
         main.getBatch().end();
 
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        camera.setToOrtho(false, width, height);
+        hudCamera.setToOrtho(false, width, height);
+
+        camera.update();
+        hudCamera.update();
+    }
+
+    private String getInfoText(){
+        if(taxi.getSpeed() > 0){
+            return String.format("Speed: %.1f (forward)", taxi.getSpeed());
+        } else if (taxi.getSpeed() < 0) {
+            return String.format("Speed: %.1f (reverse)", taxi.getSpeed());
+        } else {
+            return "Speed: 0 (stopped)";
+        }
     }
 }

@@ -66,7 +66,7 @@ public class Taxi extends Car{
 
                 } else if (speed < 0) {
                     speed += friction * dt;
-                    if (speed < 0) speed = 0;
+                    if (speed > 0) speed = 0;
 
                 }
             }
@@ -78,8 +78,8 @@ public class Taxi extends Car{
         y += MathUtils.sinDeg(rotation) * speed * dt;
 
         if (Math.abs(speed) > 10) {
-            if(right) rotation += turnSpeed * steeringMultiplier * dt;
-            if(left) rotation -= turnSpeed * steeringMultiplier * dt;
+            if(left) rotation += turnSpeed * steeringMultiplier * dt;
+            if(right) rotation -= turnSpeed * steeringMultiplier * dt;
         }
 
     }
