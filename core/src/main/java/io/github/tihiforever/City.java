@@ -3,6 +3,7 @@ package io.github.tihiforever;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.util.Collections;
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -20,6 +21,8 @@ public class City {
         cellSize = 192;
         scaleSize = 2;
 
+        Random random = new Random();
+
         generateCity();
     }
 
@@ -27,7 +30,21 @@ public class City {
         grid = new Cell[mapSize][mapSize];
 
         for (int i = 0; i < mapSize; i++) {
-            grid[i] =
+            grid[i] = new Cell[mapSize];
+            for (int j = 0; j < mapSize; j++) {
+                grid[i][j] = new Cell(i, j);
+            }
+        }
+
+        ArrayList<Cell> checkOrder = getAllCells();
+        Collections.shuffle(checkOrder);
+
+        for (int id = 0; id < checkOrder.size(); id++) {
+            Cell currentTile = checkOrder.get(id);
+
+            if (currentTile.getType() == tileTypes.NONE){
+                int squaredWidth;
+            }
         }
     }
 

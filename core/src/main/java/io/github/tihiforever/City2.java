@@ -1,4 +1,4 @@
-package io.github.tihiforever;
+/*package io.github.tihiforever;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -151,5 +151,5 @@ public class City2 {
         tileTypes type = newGrid[row][col].type;
         return type == tileTypes.RESIDENTIAL || type == tileTypes.COMMERCIAL || type == tileTypes.INDUSTRIAL;
     }
-}
+}*/
 

@@ -3,6 +3,7 @@ package io.github.tihiforever;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -11,12 +12,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 
 public class GameScreen extends ScreenAdapter {
-    private ShapeRenderer sr;
 
     // Main game objects
-    /*private City city;
+    private City city;
     private Taxi taxi;
-    private Graph graph;
+    /*private Graph graph;
     private NPCManager npcManager;
     */
 
@@ -26,10 +26,6 @@ public class GameScreen extends ScreenAdapter {
     // Cameras for the game world and HUD
     private OrthographicCamera camera;
     private OrthographicCamera hudCamera;
-
-    // Used to draw text on screen
-    private SpriteBatch batch;
-    private BitmapFont font;
 
     // Flags/Modes and Nodes
     private boolean debugMode;
@@ -48,13 +44,9 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show(){
-        sr = new ShapeRenderer();
-        batch = new SpriteBatch();
-        font = new BitmapFont();
-
-        /*city = new City();
+        //city = new City();
         taxi = new Taxi(city.getWorldWidth() / 2f + 280, city.getWorldHeight() / 2f);
-        graph = new Graph(city);
+        /*graph = new Graph(city);
         pathfinder = new Pathfinder(graph);
         npcManager = new NPCManager(graph, pathfinder, 200);
 `       */
@@ -105,7 +97,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void updateEntities(float delta){
-        //taxi.update();
+        taxi.update();
         //npcManager.update(delta);
     }
 
@@ -126,28 +118,28 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void drawWorld(){
-        sr.setProjectionMatrix(camera.combined);
-        sr.begin(ShapeRenderer.ShapeType.Filled);
+        main.getSr().setProjectionMatrix(camera.combined);
+        main.getSr().begin(ShapeRenderer.ShapeType.Filled);
 
         // Environment & Entities
 //        city.draw(sr);
-//        taxi.draw(sr);
+        taxi.draw(main.getSr(), Color.YELLOW);
 //        graph.draw(sr);
 //        npcManager.draw(sr);
 
-        sr.end();
+        main.getSr().end();
     }
 
     private void drawHud(float delta){
-        batch.setProjectionMatrix(hudCamera.combined);
+        main.getBatch().setProjectionMatrix(hudCamera.combined);
 
-        batch.begin();
-        font.getData().scale(1);
+        main.getBatch().begin();
+        main.getFont().getData().scale(1);
 
         // Display the taxi's current speed
-        font.draw(batch, "Taxi-Game", 20, Gdx.graphics.getHeight() - 20);
+        main.getFont().draw(main.getBatch(), "Taxi-Game", 20, Gdx.graphics.getHeight() - 20);
 
-        batch.end();
+        main.getBatch().end();
 
     }
 

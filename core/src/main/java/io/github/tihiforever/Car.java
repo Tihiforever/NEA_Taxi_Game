@@ -30,17 +30,17 @@ public class Car {
     protected float previousY;
     protected float previousRotation;
 
-    public Car(float x, float y){
+    public Car(float x, float y) {
         this.x = x;
         this.y = y;
         width = 46;
         height = 82;
     }
 
-    public void draw(ShapeRenderer sr, Color colour){
+    public void draw(ShapeRenderer sr, Color colour) {
         sr.setColor(colour);
 
-        sr.getTransformMatrix().translate(x + width/2f, y + height/2f, 0).rotate(0,0,1,rotation-90).translate(-width/2f,-height/2f,0);
+        sr.getTransformMatrix().translate(x + width / 2f, y + height / 2f, 0).rotate(0, 0, 1, rotation - 90).translate(-width / 2f, -height / 2f, 0);
         sr.updateMatrices();
 
         sr.rect(0, 0, width, height);
@@ -52,6 +52,4 @@ public class Car {
         speed = newSpeed;
         collisionTimer = delay;
     }
-
-
 }
