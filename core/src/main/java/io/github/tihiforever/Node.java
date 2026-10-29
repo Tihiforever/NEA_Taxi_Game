@@ -25,6 +25,14 @@ public class Node {
         this.col = col;
         this.x = x;
         this.y = y;
+
+        this.gCost = Float.MAX_VALUE;
+        this.hCost = 0;
+        this.fCost = Float.MAX_VALUE;
+
+        this.parent = null;
+        this.open = false;
+        this.closed = false;
     }
 
     public int getRow() {return row;}

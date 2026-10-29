@@ -27,40 +27,29 @@ public class Graph {
         Cell[][] grid = city.getGrid();
 
         for (int row = 0; row < grid.length; row++) {
-            for (int col = 0; col < grid.length; col++) {
-                if (city.isBuilding(row, col)) continue;
+            for (int col = 0; col < grid[row].length; col++) {
+                if (!city.isRoad(row, col)) continue;
 
                 int connections = 0;
 
-                boolean north = false;
-                boolean south = false;
-                boolean east = false;
-                boolean west = false;
+                boolean north = city.isRoad(row - 1, col);
+                boolean south = city.isRoad(row + 1, col);
+                boolean east = city.isRoad(row, col + 1);
+                boolean west = city.isRoad(row, col - 1);
 
-                if (row > 0 && !city.isBuilding(row - 1, col)) {
-                    north = true;
-                    connections++;
-                }
-                if (row < city.getMapSize() - 1 && !city.isBuilding(row + 1, col)) {
-                    south = true;
-                    connections++;
-                }
-                if (col < city.getMapSize() - 1 && !city.isBuilding(row, col + 1)) {
-                    east = true;
-                    connections++;
-                }
-                if (col > 0 && !city.isBuilding(row, col - 1)) {
-                    west = true;
-                    connections++;
-                }
-                if (connections == 2) {
-                    if ((north && south) || (east && west)) {
-                        continue;
-                    }
-                }
+                boolean vertical = north && south;
+                boolean horizontal = east && west;
 
-                float x = col * city.getCellSize() * city.getScaleSize();
-                float y = row * city.getCellSize() * city.getScaleSize();
+                if (north) connections++;
+                if (south) connections++;
+                if (east) connections++;
+                if (west) connections++;
+
+                if(connections == 2 && (vertical || horizontal)) continue;
+                if (connections == 1) System.out.println("deadend at" + row + " " + col);
+
+                float x = col * city.getCellSize() + city.getCellSize() / 2f;
+                float y = row * city.getCellSize() + city.getCellSize() / 2f;
 
                 nodes.add(new Node(row, col, x, y));
             }
@@ -101,17 +90,17 @@ public class Graph {
         }
     }
 
-    public void draw(ShapeRenderer shapeRenderer) {
-        shapeRenderer.setColor(Color.GOLD);
+    public void draw(ShapeRenderer sr) {
+        sr.setColor(Color.GOLD);
 
         for (Edge edge : edges) {
-            shapeRenderer.line(edge.getStart().getX(), edge.getStart().getY(), edge.getEnd().getX(), edge.getEnd().getY());
+            sr.line(edge.getStart().getX(), edge.getStart().getY(), edge.getEnd().getX(), edge.getEnd().getY());
         }
 
-        shapeRenderer.setColor(Color.YELLOW);
+        sr.setColor(Color.YELLOW);
 
         for (Node node : nodes) {
-            shapeRenderer.circle(node.getX(), node.getY(), 10);
+            sr.circle(node.getX(), node.getY(), 6);
         }
     }
 

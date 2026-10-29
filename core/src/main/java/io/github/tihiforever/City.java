@@ -18,7 +18,7 @@ public class City {
     private int scaleSize;
 
     public City(){
-        mapSize = 50;
+        mapSize = 25;
         cellSize = 192;
         scaleSize = 2;
 
@@ -65,33 +65,33 @@ public class City {
                         }
                     }
                 }
+            }
+        }
 
-                newGrid = new Cell[mapSize * scaleSize][mapSize * scaleSize];
+        newGrid = new Cell[mapSize * scaleSize][mapSize * scaleSize];
 
-                for (int i = 0; i < mapSize * scaleSize; i++) {
-                    for (int j = 0; j < mapSize * scaleSize; j++) {
-                        newGrid[i][j] = new Cell(i, j);
+        for (int i = 0; i < mapSize * scaleSize; i++) {
+            for (int j = 0; j < mapSize * scaleSize; j++) {
+                newGrid[i][j] = new Cell(i, j);
 
-                        Cell originalCell = grid[i / scaleSize][j / scaleSize];
+                Cell originalCell = grid[i / scaleSize][j / scaleSize];
 
-                        newGrid[i][j].setId(originalCell.getId());
-                        newGrid[i][j].setType(originalCell.getType());
-                    }
-                }
+                newGrid[i][j].setId(originalCell.getId());
+                newGrid[i][j].setType(originalCell.getType());
+            }
+        }
 
-                for (int i = 0; i < mapSize * scaleSize; i++) {
-                    for (int j = 0; j < mapSize * scaleSize; j++) {
-                        checkIfRoad(i, j);
-                    }
-                }
+        for (int i = 0; i < mapSize * scaleSize; i++) {
+            for (int j = 0; j < mapSize * scaleSize; j++) {
+                checkIfRoad(i, j);
             }
         }
 
     }
 
     public void draw(ShapeRenderer sr) {
-        for (int i = 0; i < mapSize; i++) {
-            for (int j = 0; j < mapSize; j++) {
+        for (int i = 0; i < newGrid.length; i++) {
+            for (int j = 0; j < newGrid[i].length; j++) {
                 sr.setColor(getColor(newGrid[i][j].getType()));
                 sr.rect(j * cellSize, i * cellSize, cellSize, cellSize);
             }
@@ -113,18 +113,21 @@ public class City {
     private boolean isInBoundsScaled(int i, int j){return i >= 0 && i< mapSize * scaleSize && j >= 0 && j < mapSize * scaleSize;}
 
     public boolean isBuilding(int row, int col) {
-        if (row < 0 || row >= newGrid.length || col < 0 || col >= newGrid[0].length) {
-            return true;
-        }
+        if (row < 0 || row >= newGrid.length || col < 0 || col >= newGrid[0].length) return true;
         tileTypes type = newGrid[row][col].getType();
         return type == tileTypes.RESIDENTIAL || type == tileTypes.COMMERCIAL || type == tileTypes.INDUSTRIAL;
     }
 
+    public boolean isRoad(int row, int col) {
+        if (row < 0 || row >= newGrid.length || col < 0 || col >= newGrid[0].length) return false;
+        return newGrid[row][col].getType() == tileTypes.ROAD;
+    }
+
     private void checkIfRoad(int i, int j){
-        if (isInBounds(i + 1, j) && newGrid[i + 1][j].getId() != newGrid[i][j].getId()){
+        if (isInBoundsScaled(i + 1, j) && newGrid[i + 1][j].getId() != newGrid[i][j].getId()){
             newGrid[i][j].setType(tileTypes.ROAD);
         }
-        if (isInBounds(i, j + 1) && newGrid[i][j + 1].getId() != newGrid[i][j].getId()){
+        if (isInBoundsScaled(i, j + 1) && newGrid[i][j + 1].getId() != newGrid[i][j].getId()){
             newGrid[i][j].setType(tileTypes.ROAD);
         }
     }
