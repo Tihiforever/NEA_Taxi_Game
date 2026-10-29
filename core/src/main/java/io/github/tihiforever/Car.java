@@ -2,6 +2,8 @@ package io.github.tihiforever;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Polygon;
 
 public class Car {
 
@@ -12,6 +14,7 @@ public class Car {
     protected float height;
     protected float rotation;
     protected float speed;
+    protected Polygon hitbox;
 
     // constants
     protected final float maxSpeed = 1400f;
@@ -35,6 +38,9 @@ public class Car {
         this.y = y;
         width = 46;
         height = 82;
+
+        hitbox = new Polygon(new float[]{5, 6, width - 11, 6, width - 11, height - 16, 5, height - 1});
+        hitbox.setOrigin(width / 2f, height / 2f);
     }
 
     public void draw(ShapeRenderer sr, Color colour) {
@@ -51,6 +57,34 @@ public class Car {
     public void bounce(float newSpeed) {
         speed = newSpeed;
         collisionTimer = delay;
+    }
+
+    protected void updateHitbox() {
+        hitbox.setPosition(x, y);
+        hitbox.setRotation(rotation);
+    }
+
+    public boolean collidesWith(Car other) {
+        return Intersector.overlapConvexPolygons(hitbox, other.hitbox);
+    }
+
+    public void savePreviousPosition() {
+        previousX = x;
+        previousY = y;
+        previousRotation = rotation;
+    }
+
+    public void resolveCollision() {
+        x = previousX;
+        y = previousY;
+        rotation = previousRotation;
+
+        updateHitbox();
+        bounce(-speed * 0.2f);
+    }
+
+    public float getCollisionTimer() {
+        return collisionTimer;
     }
 
     public float getX() {return x;}

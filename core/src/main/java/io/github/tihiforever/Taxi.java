@@ -15,6 +15,7 @@ public class Taxi extends Car{
 
     public void update(){
         float dt = Gdx.graphics.getDeltaTime();
+        savePreviousPosition();
 
         boolean forward = inputHandeler.isKeyPressed(Input.Keys.W) || inputHandeler.isKeyPressed(Input.Keys.UP);
         boolean backward = inputHandeler.isKeyPressed(Input.Keys.S) || inputHandeler.isKeyPressed(Input.Keys.DOWN);
@@ -68,6 +69,8 @@ public class Taxi extends Car{
 
                 }
             }
+
+            updateHitbox();
         }
 
         speed = MathUtils.clamp(speed, -maxSpeed / 2f, maxSpeed);

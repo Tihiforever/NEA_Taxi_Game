@@ -15,6 +15,7 @@ public class GameScreen extends ScreenAdapter {
     private City city;
     private Graph graph;
     private Pathfinder pathfinder;
+    private Job job;
 
     private OrthographicCamera camera;
     private OrthographicCamera hudCamera;
@@ -127,6 +128,7 @@ public class GameScreen extends ScreenAdapter {
 
     private void updateEntities(float delta) {
         taxi.update();
+        taxi.resolveCollision();
 
         if (visualisationEnabled && !visualisationPaused && !pathfinder.isSearchFinished()) {
             searchTimer += delta;
