@@ -13,10 +13,13 @@ public class TitleScreen extends ScreenAdapter {
     private final Main main;
     private final InputHandeler inputHandeler;
 
+    private OrthographicCamera camera;
+
     // Taxi position and movement variables
     private float taxiX;
     private float taxiY;
     private float taxiSpeed;
+
 
     // Scale variable
     private float scale;
@@ -35,6 +38,9 @@ public class TitleScreen extends ScreenAdapter {
         taxiX = -100f;   // Start off-screen on the left
         taxiY = 50f;     // Height above bottom of screen
         taxiSpeed = 400f; // Pixels per second
+
+        camera = new OrthographicCamera();
+        resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     @Override
@@ -43,8 +49,9 @@ public class TitleScreen extends ScreenAdapter {
         float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
 
-        //update taxi
+        //update
         taxiX += taxiSpeed * delta;
+        camera.update();
 
         //update text scale
         scale = 6f;
@@ -57,6 +64,8 @@ public class TitleScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0.15f, 0.55f, 0.15f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+
+        main.getSr().setProjectionMatrix(camera.combined);
         main.getSr().begin(ShapeRenderer.ShapeType.Filled);
 
         // Road line
@@ -77,6 +86,7 @@ public class TitleScreen extends ScreenAdapter {
 
         main.getSr().end();
 
+        main.getBatch().setProjectionMatrix(camera.combined);
         main.getBatch().begin();
 
         // Main title
@@ -100,5 +110,11 @@ public class TitleScreen extends ScreenAdapter {
             screenManager.setScreen(Screen_Type.MAIN_MENU);
             inputHandeler.resetMouseClick();
         }
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        camera.setToOrtho(false, width, height);
+        camera.update();
     }
 }

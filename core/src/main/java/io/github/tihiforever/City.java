@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.ArrayList;
 
 public class City {
-
+    private final Random random;
     private Cell[][] grid;
     private Cell[][] newGrid;
 
@@ -21,8 +21,7 @@ public class City {
         cellSize = 192;
         scaleSize = 2;
 
-        Random random = new Random();
-
+        random = new Random();
         generateCity();
     }
 
@@ -43,9 +42,50 @@ public class City {
             Cell currentTile = checkOrder.get(id);
 
             if (currentTile.getType() == tileTypes.NONE){
-                int squaredWidth;
+                int width;
+                int height;
+
+                if(random.nextBoolean()){
+                    width = random.nextInt(2,5);
+                    height = 2;
+                } else {
+                    width = 2;
+                    height = random.nextInt(2,5);
+                }
+
+                tileTypes[] zones = {tileTypes.COMMERCIAL, tileTypes.INDUSTRIAL, tileTypes.RESIDENTIAL};
+                tileTypes zone = zones[random.nextInt(0, zones.length)];
+
+                for (int i = 0; i < width; i++) {
+                    for (int j = 0; j < height; j++) {
+                        if (isInBounds(currentTile.getI() + i, currentTile.getJ() + j)) {
+                            grid[currentTile.getI() + i][currentTile.getJ() + j].setId(id);
+                            grid[currentTile.getI() + i][currentTile.getJ() + j].setType(zone);
+                        }
+                    }
+                }
+
+                newGrid = new Cell[mapSize * scaleSize][mapSize * scaleSize];
+
+                for (int i = 0; i < mapSize * scaleSize; i++) {
+                    for (int j = 0; j < mapSize * scaleSize; j++) {
+                        newGrid[i][j] = new Cell(i, j);
+
+                        Cell originalCell = grid[i / scaleSize][j / scaleSize];
+
+                        newGrid[i][j].setId(originalCell.getId());
+                        newGrid[i][j].setType(originalCell.getType());
+                    }
+                }
+
+                for (int i = 0; i < mapSize * scaleSize; i++) {
+                    for (int j = 0; j < mapSize * scaleSize; j++) {
+                        checkIfRoad(i, j);
+                    }
+                }
             }
         }
+
     }
 
     public void draw(ShapeRenderer sr) {

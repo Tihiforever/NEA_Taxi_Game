@@ -18,7 +18,7 @@ public class Car {
     protected final float acceleration = 400f;
     protected final float friction = 300f;
     protected final float turnSpeed = 220f;
-    protected final float breakMultiplier = 2.5f;
+    protected final float breakMultiplier = 5f;
 
     // waiting times and delay
     protected float reverseTimer = 0f;
