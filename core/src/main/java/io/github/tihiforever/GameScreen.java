@@ -29,14 +29,19 @@ public class GameScreen extends ScreenAdapter {
     private float searchTimer = 0f;
     private float secondsPerStep = 0.15f;
     private boolean visualisationPaused = false;
+    private boolean visualisationEnabled = false;
+
+    private boolean degbugMode = true;
 
     public GameScreen(ScreenManager screenManager, Main main) {
         this.screenManager = screenManager;
         this.main = main;
+        inputHandeler = new InputHandeler();
+        Gdx.input.setInputProcessor(inputHandeler);
 
         city = new City();
         graph = new Graph(city);
-        taxi = new Taxi(graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getX(),  graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getY());
+        taxi = new Taxi(graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getX(),  graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getY(), inputHandeler);
         pathfinder = new Pathfinder(graph);
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
@@ -44,9 +49,6 @@ public class GameScreen extends ScreenAdapter {
             endNode = graph.getNodes().get((int) (Math.random() * graph.getNodes().size()));
             pathfinder.startSearch(startNode, endNode);
         }
-
-        inputHandeler = new InputHandeler();
-        Gdx.input.setInputProcessor(inputHandeler);
     }
 
     @Override
@@ -60,6 +62,7 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
+        startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
 
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.15f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -84,21 +87,33 @@ public class GameScreen extends ScreenAdapter {
             screenManager.setScreen(Screen_Type.JOB_SCREEN);
             inputHandeler.clearLastKeyPressed();
         }
-        if (inputHandeler.getLastKeyPressed() == Input.Keys.SPACE) {
-            visualisationPaused = !visualisationPaused;
+        if (inputHandeler.getLastKeyPressed() == Input.Keys.TAB) {
+            visualisationEnabled = !visualisationEnabled;
             inputHandeler.clearLastKeyPressed();
+
+            if (visualisationEnabled && !graph.getNodes().isEmpty()) {
+                endNode = graph.getNodes().get((int) (Math.random() * graph.getNodes().size()));
+
+                searchTimer = 0f;
+                pathfinder.startSearch(startNode, endNode);
+            }
         }
-        if (inputHandeler.getLastKeyPressed() == Input.Keys.MINUS) {
-            secondsPerStep = Math.min(2f, secondsPerStep + 0.1f);
-            inputHandeler.clearLastKeyPressed();
-        }
-        if (inputHandeler.getLastKeyPressed() == Input.Keys.EQUALS) {
-            secondsPerStep = Math.max(0.02f, secondsPerStep - 0.1f);
-            inputHandeler.clearLastKeyPressed();
+        if (visualisationEnabled) {
+            if (inputHandeler.getLastKeyPressed() == Input.Keys.SPACE) {
+                visualisationPaused = !visualisationPaused;
+                inputHandeler.clearLastKeyPressed();
+            }
+            if (inputHandeler.getLastKeyPressed() == Input.Keys.MINUS) {
+                secondsPerStep = Math.min(2f, secondsPerStep + 0.1f);
+                inputHandeler.clearLastKeyPressed();
+            }
+            if (inputHandeler.getLastKeyPressed() == Input.Keys.EQUALS) {
+                secondsPerStep = Math.max(0.02f, secondsPerStep - 0.1f);
+                inputHandeler.clearLastKeyPressed();
+            }
         }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.P) {
             if (!graph.getNodes().isEmpty()) {
-                startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
                 endNode = graph.getNodes().get((int) (Math.random() * graph.getNodes().size()));
 
                 searchTimer = 0f;
@@ -113,7 +128,7 @@ public class GameScreen extends ScreenAdapter {
     private void updateEntities(float delta) {
         taxi.update();
 
-        if (!visualisationPaused && !pathfinder.isSearchFinished()) {
+        if (visualisationEnabled && !visualisationPaused && !pathfinder.isSearchFinished()) {
             searchTimer += delta;
 
             if (searchTimer >= secondsPerStep) {
@@ -133,9 +148,30 @@ public class GameScreen extends ScreenAdapter {
         main.getSr().setProjectionMatrix(camera.combined);
         main.getSr().begin(ShapeRenderer.ShapeType.Filled);
         city.draw(main.getSr());
-        taxi.draw(main.getSr(), Color.YELLOW);
+        if(degbugMode){
         graph.draw(main.getSr());
-        drawPathfindingVisualisation();
+        }
+        if (visualisationEnabled) {
+            drawPathfindingVisualisation();
+        } else {
+            ArrayList<Node> path = pathfinder.findPath(startNode, endNode);
+
+            main.getSr().setColor(Color.GREEN);
+
+            for(int i=0;i<path.size()-1;i++) {
+                Node a = path.get(i);
+                Node b = path.get(i+1);
+
+                main.getSr().rectLine(a.getX(), a.getY(), b.getX(), b.getY(), 8);
+            }
+
+            main.getSr().setColor(Color.RED);
+            main.getSr().circle(startNode.getX(), startNode.getY(), 12);
+
+            main.getSr().setColor(Color.BLUE);
+            main.getSr().circle(endNode.getX(), endNode.getY(), 12);
+        }
+        taxi.draw(main.getSr(), Color.YELLOW);
         main.getSr().end();
     }
 
@@ -163,37 +199,88 @@ public class GameScreen extends ScreenAdapter {
     }
 
 
+
     private void drawPathfindingVisualisation() {
-        for (Node node : graph.getNodes()) {
-            if (node.isClosed()) {
-                main.getSr().setColor(Color.ORANGE);
-                main.getSr().circle(node.getX(), node.getY(), 8);
-            } else if (node.isOpen()) {
-                main.getSr().setColor(Color.BLUE);
-                main.getSr().circle(node.getX(), node.getY(), 8);
+        ShapeRenderer sr = main.getSr();
+
+        for (Edge edge : graph.getEdges()) {
+            Node a = edge.getStart();
+            Node b = edge.getEnd();
+
+            Node child = null;
+
+            if (a.getParent() == b) {
+                child = a;
+            } else if (b.getParent() == a) {
+                child = b;
             }
+
+            if (child == null) continue;
+            if (child.isClosed()) sr.setColor(Color.ORANGE);
+
+            else if (child.isOpen()) {
+                sr.setColor(Color.SKY);
+            } else {
+                continue;
+            }
+
+            sr.rectLine(a.getX(), a.getY(), b.getX(), b.getY(), 10);
         }
 
         if (pathfinder.isPathFound()) {
             ArrayList<Node> path = pathfinder.getCurrentPath();
-            main.getSr().setColor(Color.CYAN);
 
+            sr.setColor(Color.BLACK);
             for (int i = 0; i < path.size() - 1; i++) {
                 Node a = path.get(i);
                 Node b = path.get(i + 1);
-                main.getSr().rectLine(a.getX(), a.getY(), b.getX(), b.getY(), 8);
+
+                sr.rectLine(a.getX(), a.getY(), b.getX(), b.getY(), 22);
+            }
+
+            sr.setColor(Color.CYAN);
+            for (int i = 0; i < path.size() - 1; i++) {
+                Node a = path.get(i);
+                Node b = path.get(i + 1);
+
+                sr.rectLine(a.getX(), a.getY(), b.getX(), b.getY(), 13);
             }
         }
 
+        for (Node node : graph.getNodes()) {
+            if (node.isClosed()) {
+                sr.setColor(Color.ORANGE);
+                sr.circle(node.getX(), node.getY(), 13);
+            } else if (node.isOpen()) {
+                sr.setColor(Color.SKY);
+                sr.circle(node.getX(), node.getY(), 13);
+            }
+        }
+
+        Node current = pathfinder.getCurrentNode();
+
+        if (current != null && current != startNode && current != endNode) {
+            sr.setColor(Color.WHITE);
+            sr.circle(current.getX(), current.getY(), 22);
+
+            sr.setColor(Color.MAGENTA);
+            sr.circle(current.getX(), current.getY(), 15);
+        }
+
         if (startNode != null) {
-            main.getSr().setColor(Color.GREEN);
-            main.getSr().circle(startNode.getX(), startNode.getY(), 12);
+            sr.setColor(Color.BLACK);
+            sr.circle(startNode.getX(), startNode.getY(), 23);
+
+            sr.setColor(Color.LIME);
+            sr.circle(startNode.getX(), startNode.getY(), 17);
         }
 
         if (endNode != null) {
-            main.getSr().setColor(Color.RED);
-            main.getSr().circle(endNode.getX(), endNode.getY(), 12);
+            sr.setColor(Color.BLACK);
+            sr.circle(endNode.getX(), endNode.getY(), 23);
+
+            sr.setColor(Color.RED);
+            sr.circle(endNode.getX(), endNode.getY(), 17);
         }
     }
-
 }

@@ -7,12 +7,10 @@ import com.badlogic.gdx.math.MathUtils;
 public class Taxi extends Car{
     private final InputHandeler inputHandeler;
 
-    public Taxi(float x, float y) {
+    public Taxi(float x, float y, InputHandeler inputHandeler) {
         super(x, y);
         rotation = 90f;
-
-        inputHandeler = new InputHandeler();
-        Gdx.input.setInputProcessor(inputHandeler);
+        this.inputHandeler = inputHandeler;
     }
 
     public void update(){

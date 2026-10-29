@@ -91,13 +91,13 @@ public class Graph {
     }
 
     public void draw(ShapeRenderer sr) {
-        sr.setColor(Color.GOLD);
+        sr.setColor(new Color(0.30f, 0.33f, 0.38f, 1f));
 
         for (Edge edge : edges) {
             sr.line(edge.getStart().getX(), edge.getStart().getY(), edge.getEnd().getX(), edge.getEnd().getY());
         }
 
-        sr.setColor(Color.YELLOW);
+        sr.setColor(new Color(0.45f, 0.48f, 0.52f, 1f));
 
         for (Node node : nodes) {
             sr.circle(node.getX(), node.getY(), 6);

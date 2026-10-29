@@ -10,6 +10,7 @@ public class Pathfinder {
     private ArrayList<Node> currentPath = new ArrayList<>();
 
     private Node start;
+    private Node currentNode;
     private Node end;
 
     private boolean searchFinished;
@@ -118,6 +119,7 @@ public class Pathfinder {
     public void startSearch(Node start, Node end) {
         this.start = start;
         this.end = end;
+        currentNode = null;
 
         open.clear();
         currentPath.clear();
@@ -162,6 +164,8 @@ public class Pathfinder {
                 current = node;
             }
         }
+
+        currentNode = current;
 
         open.remove(current);
         current.setOpen(false);
@@ -213,5 +217,6 @@ public class Pathfinder {
     public ArrayList<Node> getCurrentPath(){return currentPath;}
     public boolean isSearchFinished(){return searchFinished;}
     public boolean isPathFound(){return pathFound;}
+    public Node getCurrentNode() {return currentNode;}
 
 }
