@@ -141,4 +141,5 @@ public class City {
     public int getCellSize(){return cellSize;}
     public Cell[][] getGrid(){return newGrid;}
     public int getMapSize(){return mapSize;}
+    public int getScaleSize(){return scaleSize;}
 }
