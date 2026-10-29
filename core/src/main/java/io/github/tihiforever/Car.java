@@ -39,7 +39,7 @@ public class Car {
         width = 46;
         height = 82;
 
-        hitbox = new Polygon(new float[]{5, 6, width - 11, 6, width - 11, height - 16, 5, height - 1});
+        hitbox = new Polygon(new float[] {5, 5, width - 5, 5, width - 5, height - 5, 5, height - 5});
         hitbox.setOrigin(width / 2f, height / 2f);
     }
 
@@ -61,7 +61,7 @@ public class Car {
 
     protected void updateHitbox() {
         hitbox.setPosition(x, y);
-        hitbox.setRotation(rotation);
+        hitbox.setRotation(rotation - 90f);
     }
 
     public boolean collidesWith(Car other) {
@@ -87,6 +87,18 @@ public class Car {
         return collisionTimer;
     }
 
+    public void drawHitbox(ShapeRenderer sr) {
+        float[] vertices = hitbox.getTransformedVertices();
+
+        sr.setColor(Color.CYAN);
+
+        for (int i = 0; i < vertices.length; i += 2) {
+            int next = (i + 2) % vertices.length;
+
+            sr.rectLine(vertices[i], vertices[i + 1], vertices[next], vertices[next + 1], 2f);
+        }
+    }
+
     public float getX() {return x;}
     public void setX(float x) {this.x = x;}
 
@@ -104,4 +116,6 @@ public class Car {
 
     public float getSpeed() {return speed;}
     public void setSpeed(float speed) {this.speed = speed;}
+
+    public Polygon getHitbox() {return hitbox;}
 }

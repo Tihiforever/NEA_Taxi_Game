@@ -5,6 +5,9 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 
 public class Job {
+    private Pathfinder pathfinder;
+    private Graph graph;
+
     // job info
     private Node pickup;
     private Node dropoff;
@@ -48,9 +51,11 @@ public class Job {
     private final float collisionPenalty = 0.1f;
     private final float routePenalty = 0.5f;
 
-    public Job(Node pickup, Node dropoff, Graph graph, Pathfinder pathfinder, City city){
+    public Job(Node pickup, Node dropoff, Graph graph, Pathfinder pathfinder){
         this.pickup = pickup;
         this.dropoff = dropoff;
+        this.pathfinder = pathfinder;
+        this.graph = graph;
 
         patience = patienceStart;
         strDist = Vector2.dst(pickup.getX(), pickup.getY(), dropoff.getX(), dropoff.getY());

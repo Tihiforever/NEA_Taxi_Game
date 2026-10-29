@@ -69,8 +69,6 @@ public class Taxi extends Car{
 
                 }
             }
-
-            updateHitbox();
         }
 
         speed = MathUtils.clamp(speed, -maxSpeed / 2f, maxSpeed);
@@ -83,5 +81,6 @@ public class Taxi extends Car{
             if(right) rotation -= turnSpeed * steeringMultiplier * dt;
         }
 
+        updateHitbox();
     }
 }

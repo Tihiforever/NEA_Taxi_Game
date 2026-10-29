@@ -44,6 +44,7 @@ public class GameScreen extends ScreenAdapter {
         graph = new Graph(city);
         taxi = new Taxi(graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getX(),  graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getY(), inputHandeler);
         pathfinder = new Pathfinder(graph);
+        job = new Job(graph.getClosestNode(taxi.getX(), taxi.getY()), graph.getNodes().get(1), graph, pathfinder);
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
         if (!graph.getNodes().isEmpty()) {
@@ -128,8 +129,10 @@ public class GameScreen extends ScreenAdapter {
 
     private void updateEntities(float delta) {
         taxi.update();
-        taxi.resolveCollision();
-
+        if (city.collidesWithBuilding(taxi.getHitbox())){
+            taxi.resolveCollision();
+            job.recordCollision();
+        }
         if (visualisationEnabled && !visualisationPaused && !pathfinder.isSearchFinished()) {
             searchTimer += delta;
 
@@ -137,6 +140,9 @@ public class GameScreen extends ScreenAdapter {
                 searchTimer = 0f;
                 pathfinder.stepSearch();
             }
+        }
+        if (job != null && !job.isCompleted()) {
+            job.update(delta, taxi, city);
         }
     }
 
@@ -150,9 +156,7 @@ public class GameScreen extends ScreenAdapter {
         main.getSr().setProjectionMatrix(camera.combined);
         main.getSr().begin(ShapeRenderer.ShapeType.Filled);
         city.draw(main.getSr());
-        if(degbugMode){
-        graph.draw(main.getSr());
-        }
+        if(degbugMode) graph.draw(main.getSr());
         if (visualisationEnabled) {
             drawPathfindingVisualisation();
         } else {
@@ -174,6 +178,7 @@ public class GameScreen extends ScreenAdapter {
             main.getSr().circle(endNode.getX(), endNode.getY(), 12);
         }
         taxi.draw(main.getSr(), Color.YELLOW);
+        if (degbugMode) taxi.drawHitbox(main.getSr());
         main.getSr().end();
     }
 

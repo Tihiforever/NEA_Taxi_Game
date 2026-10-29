@@ -2,6 +2,7 @@ package io.github.tihiforever;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Polygon;
 
 import java.util.Collections;
 import java.util.Random;
@@ -138,6 +139,18 @@ public class City {
         if (zone == tileTypes.INDUSTRIAL) return Color.RED;
         if (zone == tileTypes.ROAD) return Color.DARK_GRAY;
         return Color.BLACK;
+    }
+    public boolean collidesWithBuilding(Polygon hitbox) {
+        float[] corners = hitbox.getTransformedVertices();
+
+        for (int i = 0; i < corners.length; i += 2) {
+            int col = (int) (corners[i] / cellSize);
+            int row = (int) (corners[i + 1] / cellSize);
+
+            if (isBuilding(row, col)) return true;
+        }
+
+        return false;
     }
 
     public int getWorldWidth(){return mapSize * scaleSize * cellSize;}
