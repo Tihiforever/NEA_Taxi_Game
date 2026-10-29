@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class City {
     private final Random random;
+
     private Cell[][] grid;
     private Cell[][] newGrid;
 
@@ -17,7 +18,7 @@ public class City {
     private int scaleSize;
 
     public City(){
-        mapSize = 25;
+        mapSize = 50;
         cellSize = 192;
         scaleSize = 2;
 
@@ -89,8 +90,8 @@ public class City {
     }
 
     public void draw(ShapeRenderer sr) {
-        for (int i = 0; i < mapSize * scaleSize; i++) {
-            for (int j = 0; j < mapSize * scaleSize; j++) {
+        for (int i = 0; i < mapSize; i++) {
+            for (int j = 0; j < mapSize; j++) {
                 sr.setColor(getColor(newGrid[i][j].getType()));
                 sr.rect(j * cellSize, i * cellSize, cellSize, cellSize);
             }

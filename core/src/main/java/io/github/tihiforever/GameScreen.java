@@ -80,6 +80,7 @@ public class GameScreen extends ScreenAdapter {
         main.getSr().begin(ShapeRenderer.ShapeType.Filled);
         city.draw(main.getSr());
         taxi.draw(main.getSr(), Color.YELLOW);
+        graph.draw(main.getSr());
         main.getSr().end();
     }
 

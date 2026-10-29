@@ -24,13 +24,11 @@ public class Graph {
     // Generates nodes at intersections and road ends
     public void generateNodes() {
         nodes.clear();
+        Cell[][] grid = city.getGrid();
 
-        for (int row = 0; row < city.getMapSize(); row++) {
-            for (int col = 0; col < city.getMapSize(); col++) {
-
-                if (city.isBuilding(row, col)) {
-                    continue;
-                }
+        for (int row = 0; row < grid.length; row++) {
+            for (int col = 0; col < grid.length; col++) {
+                if (city.isBuilding(row, col)) continue;
 
                 int connections = 0;
 
@@ -71,12 +69,13 @@ public class Graph {
 
     public void generateEdges() {
         edges.clear();
+        Cell[][] grid = city.getGrid();
 
         for (Node node : nodes) {
             int row = node.getRow();
             int col = node.getCol();
 
-            for (int c = col + 1; c < city.getMapSize(); c++) {
+            for (int c = col + 1; c < grid.length; c++) {
                 if (city.isBuilding(row, c)) break;
 
                 Node end = getNodeAt(row, c);
@@ -88,7 +87,7 @@ public class Graph {
                 }
             }
 
-            for (int r = row + 1; r < city.getMapSize(); r++) {
+            for (int r = row + 1; r < grid.length; r++) {
                 if (city.isBuilding(r, col)) break;
 
                 Node end = getNodeAt(r, col);
