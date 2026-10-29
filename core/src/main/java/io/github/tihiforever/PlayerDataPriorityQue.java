@@ -2,7 +2,7 @@ package io.github.tihiforever;
 
 import java.util.ArrayList;
 
-public class PriorityQueue {
+public class PlayerDataPriorityQue {
     private static class PlayerData {
         String name;
         int score;

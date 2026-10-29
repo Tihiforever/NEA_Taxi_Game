@@ -1,7 +1,6 @@
 package io.github.tihiforever;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -14,7 +13,7 @@ public class LeaderboardScreen extends ScreenAdapter {
     private final Main main;
     private final InputHandeler inputHandeler;
 
-    private PriorityQueue playerData;
+    private PlayerDataPriorityQue playerData;
 
     public LeaderboardScreen(ScreenManager screenManager, Main main) {
         this.screenManager = screenManager;
@@ -61,8 +60,8 @@ public class LeaderboardScreen extends ScreenAdapter {
         }
     }
 
-    private PriorityQueue readFromFile(){
-        PriorityQueue playerData = new PriorityQueue();
+    private PlayerDataPriorityQue readFromFile(){
+        PlayerDataPriorityQue playerData = new PlayerDataPriorityQue();
 
         try {
             FileReader file = new FileReader("leaderboard.txt");
