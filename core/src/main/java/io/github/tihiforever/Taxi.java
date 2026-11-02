@@ -3,6 +3,7 @@ package io.github.tihiforever;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
@@ -87,18 +88,20 @@ public class Taxi extends Car{
     }
 
     public void pickup(Graph graph, Job job){
-        if(graph.getClosestNode(x , y) == job.getPickup()){
+        if (job.isPickedUp() || job.isDroppedOff() || job.isCompleted()) return;
+        if(graph.getClosestNode(x + width / 2f, y + height / 2f) == job.getPickup() && Vector2.dst(x + width / 2f, y + height / 2f, graph.getClosestNode(x + width / 2f, y + height / 2f).getX(), graph.getClosestNode(x + width / 2f, y + height / 2f).getY()) <= 60f){
             job.setPickedUp(true);
-            job.setDroppedOff(false);
-            graph.getClosestNode(x, y).setHasJob(false);
+            graph.getClosestNode(x + width / 2f, y + height / 2f).setHasJob(false);
         }
     }
 
     public void dropoff(Graph graph, Job job){
-        if(graph.getClosestNode(x , y) == job.getDropoff()){
+        if (!job.isPickedUp() || job.isCompleted()) return;
+        if(graph.getClosestNode(x + width / 2f, y + height / 2f) == job.getPickup() && Vector2.dst(x + width / 2f, y + height / 2f, graph.getClosestNode(x + width / 2f, y + height / 2f).getX(), graph.getClosestNode(x + width / 2f, y + height / 2f).getY()) <= 60f){
             job.setPickedUp(false);
             job.setDroppedOff(true);
-            graph.getClosestNode(x, y).setHasJob(false);
+            graph.getClosestNode(x + width / 2f, y + height / 2f).setHasJob(false);
+            job.completedJob();
         }
     }
 }

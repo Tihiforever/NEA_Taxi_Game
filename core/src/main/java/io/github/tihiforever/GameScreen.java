@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-
+import java.util.Random;
 import java.util.ArrayList;
 
 public class GameScreen extends ScreenAdapter {
@@ -16,6 +16,7 @@ public class GameScreen extends ScreenAdapter {
     private Graph graph;
     private Pathfinder pathfinder;
     private Job job;
+    private Random random;
 
     private OrthographicCamera camera;
     private OrthographicCamera hudCamera;
@@ -44,7 +45,8 @@ public class GameScreen extends ScreenAdapter {
         graph = new Graph(city);
         taxi = new Taxi(graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getX(),  graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getY(), inputHandeler);
         pathfinder = new Pathfinder(graph);
-        job = new Job(graph.getClosestNode(taxi.getX(), taxi.getY()), graph.getNodes().get(1), graph, pathfinder);
+        random = new Random();
+        job = new Job(graph.getNodes().get(random.nextInt(graph.getNodes().size())), graph.getNodes().get(random.nextInt(graph.getNodes().size())), graph, pathfinder);
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
         if (!graph.getNodes().isEmpty()) {
@@ -129,12 +131,12 @@ public class GameScreen extends ScreenAdapter {
 
     private void updateEntities(float delta) {
         taxi.update();
+        if (!job.isCompleted()) taxi.pickup(graph, job);
+        else taxi.dropoff(graph, job);
         if (city.collidesWithBuilding(taxi.getHitbox())){
             taxi.resolveCollision();
             job.recordCollision();
         }
-        taxi.pickup(graph, job);
-        taxi.dropoff(graph, job);
         if (visualisationEnabled && !visualisationPaused && !pathfinder.isSearchFinished()) {
             searchTimer += delta;
 
@@ -145,10 +147,7 @@ public class GameScreen extends ScreenAdapter {
         }
         if (job != null && !job.isCompleted()) {
             job.update(delta, taxi, city);
-            job.getDropoff().setHasJob(true);
-            job.getPickup().setHasJob(true);
         }
-        System.out.println(job.getNumCollisions());
     }
 
     private void updateCamera(float delta) {
@@ -164,6 +163,18 @@ public class GameScreen extends ScreenAdapter {
         if(degbugMode) graph.draw(main.getSr());
         if (visualisationEnabled) {
             drawPathfindingVisualisation();
+        } else if (job.isPickedUp()){
+            ArrayList<Node> path = pathfinder.findPath(startNode, job.getDropoff());
+
+            main.getSr().setColor(Color.GREEN);
+
+            for(int i=0;i<path.size()-1;i++) {
+                Node a = path.get(i);
+                Node b = path.get(i+1);
+
+                main.getSr().rectLine(a.getX(), a.getY(), b.getX(), b.getY(), 8);
+            }
+
         } else {
             ArrayList<Node> path = pathfinder.findPath(startNode, endNode);
 
@@ -184,10 +195,12 @@ public class GameScreen extends ScreenAdapter {
         }
         taxi.draw(main.getSr(), Color.YELLOW);
         if (degbugMode) taxi.drawHitbox(main.getSr());
-        for (Node nodes : graph.getNodes()){
-            if (nodes.isHasJob()){
-                main.getSr().setColor(Color.PINK);
-                main.getSr().circle(nodes.getX(), nodes.getY(), 15);
+        for (Node node : graph.getNodes()){
+            if (node.isHasJob()){
+                if (node == job.getPickup()) main.getSr().setColor(Color.YELLOW);
+                else if (node == job.getDropoff()) main.getSr().setColor(Color.RED);
+
+                main.getSr().circle(node.getX(), node.getY(), 15);
             }
         }
         main.getSr().end();

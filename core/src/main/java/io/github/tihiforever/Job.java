@@ -60,6 +60,9 @@ public class Job {
         this.pathfinder = pathfinder;
         this.graph = graph;
 
+        pickup.setHasJob(true);
+        dropoff.setHasJob(true);
+
         patience = patienceStart;
         strDist = Vector2.dst(pickup.getX(), pickup.getY(), dropoff.getX(), dropoff.getY());
 
@@ -87,7 +90,7 @@ public class Job {
     }
 
     public void update(float delta, Taxi taxi, City city){
-        if(completed) return;
+        if(completed || !pickedUp) return;
 
         float currentX = taxi.getX() + taxi.getWidth() / 2f;
         float currentY = taxi.getY() + taxi.getHeight() / 2f;
@@ -134,6 +137,7 @@ public class Job {
 
         bonus = Math.max(-basePay, bonus);
         finalPay = Math.max(0f, basePay + bonus);
+        System.out.println(finalPay);
     }
 
     private float clamp(float value, float min, float max){
