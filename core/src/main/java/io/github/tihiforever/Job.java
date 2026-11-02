@@ -1,5 +1,6 @@
 package io.github.tihiforever;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class Job {
 
         float distance = 0f;
 
-        for (int i = 0; i < optimalPath.size(); i++) {
+        for (int i = 0; i < optimalPath.size() - 1; i++) {
             Node a = optimalPath.get(i);
             Node b = optimalPath.get(i+1);
 

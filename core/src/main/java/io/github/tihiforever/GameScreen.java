@@ -143,6 +143,8 @@ public class GameScreen extends ScreenAdapter {
         }
         if (job != null && !job.isCompleted()) {
             job.update(delta, taxi, city);
+            job.getDropoff().setHasJob(true);
+            job.getPickup().setHasJob(true);
         }
     }
 
@@ -179,6 +181,12 @@ public class GameScreen extends ScreenAdapter {
         }
         taxi.draw(main.getSr(), Color.YELLOW);
         if (degbugMode) taxi.drawHitbox(main.getSr());
+        for (Node nodes : graph.getNodes()){
+            if (nodes.isHasJob()){
+                main.getSr().setColor(Color.PINK);
+                main.getSr().circle(nodes.getX(), nodes.getY(), 15);
+            }
+        }
         main.getSr().end();
     }
 

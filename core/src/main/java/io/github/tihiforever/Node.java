@@ -10,6 +10,8 @@ public class Node {
     private float x;
     private float y;
 
+    private boolean hasJob;
+
     // A* stuff
     private float gCost;
     private float hCost;
@@ -33,6 +35,7 @@ public class Node {
         this.parent = null;
         this.open = false;
         this.closed = false;
+        this.hasJob = false;
     }
 
     public int getRow() {return row;}
@@ -64,4 +67,7 @@ public class Node {
 
     public boolean isClosed() {return closed;}
     public void setClosed(boolean closed) {this.closed = closed;}
+
+    public boolean isHasJob() {return hasJob;}
+    public void setHasJob(boolean hasJob) {this.hasJob = hasJob;}
 }
