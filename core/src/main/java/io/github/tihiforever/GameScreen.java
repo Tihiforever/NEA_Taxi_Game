@@ -133,6 +133,8 @@ public class GameScreen extends ScreenAdapter {
             taxi.resolveCollision();
             job.recordCollision();
         }
+        taxi.pickup(graph, job);
+        taxi.dropoff(graph, job);
         if (visualisationEnabled && !visualisationPaused && !pathfinder.isSearchFinished()) {
             searchTimer += delta;
 
@@ -146,6 +148,7 @@ public class GameScreen extends ScreenAdapter {
             job.getDropoff().setHasJob(true);
             job.getPickup().setHasJob(true);
         }
+        System.out.println(job.getNumCollisions());
     }
 
     private void updateCamera(float delta) {

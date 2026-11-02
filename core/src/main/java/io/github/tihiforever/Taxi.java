@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 
+import java.util.ArrayList;
+
 public class Taxi extends Car{
     private final InputHandeler inputHandeler;
 
@@ -82,5 +84,21 @@ public class Taxi extends Car{
         }
 
         updateHitbox();
+    }
+
+    public void pickup(Graph graph, Job job){
+        if(graph.getClosestNode(x , y) == job.getPickup()){
+            job.setPickedUp(true);
+            job.setDroppedOff(false);
+            graph.getClosestNode(x, y).setHasJob(false);
+        }
+    }
+
+    public void dropoff(Graph graph, Job job){
+        if(graph.getClosestNode(x , y) == job.getDropoff()){
+            job.setPickedUp(false);
+            job.setDroppedOff(true);
+            graph.getClosestNode(x, y).setHasJob(false);
+        }
     }
 }

@@ -35,6 +35,8 @@ public class Job {
     private float previousY;
     private boolean trackingPosition;
     private boolean completed;
+    private boolean pickedUp;
+    private boolean droppedOff;
 
     // constants (still being adjusted)
     private final float patienceStart = 100f;
@@ -152,4 +154,8 @@ public class Job {
     public float getBonus() {return bonus;}
     public float getFinalPay() {return finalPay;}
     public boolean isCompleted() {return completed;}
+    public boolean isPickedUp() {return pickedUp;}
+    public void setPickedUp(boolean pickedUp) {this.pickedUp = pickedUp;}
+    public boolean isDroppedOff() {return droppedOff;}
+    public void setDroppedOff(boolean droppedOff) {this.droppedOff = droppedOff;}
 }
