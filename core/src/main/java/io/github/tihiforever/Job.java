@@ -21,6 +21,7 @@ public class Job {
 
     // customer and driving stats
     private float patience;
+    private float patienceStart;
     private float timeTaken;
     private int numCollisions;
     private float avrgSpeed;
@@ -40,10 +41,11 @@ public class Job {
     private boolean droppedOff;
 
     // constants (still being adjusted)
-    private final float patienceStart = 100f;
+    private final float minimumPatience = 200f;
+    private final float patiencePerExpectedSecond = 2f;
+
     private final float patienceLossTime = 0.5f;
     private final float patienceLossCollisions = 15f;
-
     private final float baseFare = 20f;
     private final float farePerRoadCell = 2f;
 
@@ -64,7 +66,6 @@ public class Job {
         pickup.setHasJob(true);
         dropoff.setHasJob(true);
 
-        patience = patienceStart;
         strDist = Vector2.dst(pickup.getX(), pickup.getY(), dropoff.getX(), dropoff.getY());
 
         ArrayList<Node> optimalPath = pathfinder.findPath(pickup, dropoff);
@@ -83,6 +84,11 @@ public class Job {
         basePay = baseFare + roadDist * farePerRoadCell;
 
         optimalDist = roadDist * graph.getCellSize();
+
+        float expectedTime = optimalDist / targetSpeed;
+
+        patienceStart = Math.max(minimumPatience, expectedTime * patiencePerExpectedSecond);
+        patience = patienceStart;
 
         actDist = 0f;
         timeTaken = 0f;
@@ -129,13 +135,16 @@ public class Job {
         if (optimalDist > 0) optimalRouteDeviation = Math.max(0f, (actDist - optimalDist) / optimalDist);
 
         float patienceScore = patience / patienceStart;
-        float expectedTime = roadDist / targetSpeed;
+        float expectedTime = optimalDist / targetSpeed;
 
         if (timeTaken > 0f && expectedTime > 0f) timeTaken = clamp(expectedTime / timeTaken, 0f, 1f);
 
         float speedScore = clamp(avrgSpeed / targetSpeed, 0f, 1f);
 
         float bonusMultiplier = (patienceScore * patienceBonus) + (timeTaken * timeBonus) + (speedScore * speedBonus) - (numCollisions * collisionPenalty) - (optimalRouteDeviation * routePenalty);
+
+        bonus = basePay * bonusMultiplier;
+        finalPay = Math.max(10f, basePay + bonus);
 
         System.out.println(patienceScore);
         System.out.println(expectedTime);
@@ -145,17 +154,14 @@ public class Job {
         System.out.println(numCollisions);
         System.out.println(optimalRouteDeviation);
         System.out.println(bonusMultiplier);
-
-        bonus = basePay * bonusMultiplier;
         System.out.println(bonus);
-
-        if (basePay + bonus < 0) {
-            finalPay = basePay + bonusMultiplier;
-        } else {
-            finalPay = bonus + basePay;
-        }
-
         System.out.println(finalPay);
+
+        System.out.println("Actual distance: " + actDist);
+        System.out.println("Optimal distance: " + optimalDist);
+        System.out.println("Collision penalty: " + (numCollisions * collisionPenalty));
+        System.out.println("Route penalty: " + (optimalRouteDeviation * routePenalty));
+        System.out.println("Time score: " + timeTaken);
     }
 
     private float clamp(float value, float min, float max){

@@ -87,6 +87,10 @@ public class GameScreen extends ScreenAdapter {
             screenManager.setScreen(Screen_Type.GAME_OVER);
             inputHandeler.clearLastKeyPressed();
         }
+        if (inputHandeler.getLastKeyPressed() == Input.Keys.X) {
+            job = new Job(graph.getNodes().get(random.nextInt(graph.getNodes().size())), graph.getNodes().get(random.nextInt(graph.getNodes().size())), graph, pathfinder);
+            inputHandeler.clearLastKeyPressed();
+        }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.J) {
             screenManager.setScreen(Screen_Type.JOB_SCREEN);
             inputHandeler.clearLastKeyPressed();
@@ -176,7 +180,7 @@ public class GameScreen extends ScreenAdapter {
             }
 
         } else {
-            ArrayList<Node> path = pathfinder.findPath(startNode, endNode);
+            ArrayList<Node> path = pathfinder.findPath(startNode, job.getPickup());
 
             main.getSr().setColor(Color.GREEN);
 
