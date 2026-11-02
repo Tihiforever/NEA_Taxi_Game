@@ -17,6 +17,7 @@ public class Job {
     private float strDist;
     private float roadDist;
     private float actDist;
+    private float optimalDist;
 
     // customer and driving stats
     private float patience;
@@ -80,6 +81,9 @@ public class Job {
         roadDist = Math.round(distance);
 
         basePay = baseFare + roadDist * farePerRoadCell;
+
+        optimalDist = roadDist * graph.getCellSize();
+
         actDist = 0f;
         timeTaken = 0f;
         numCollisions = 0;
@@ -122,7 +126,7 @@ public class Job {
         completed = true;
 
         if (timeTaken > 0f) avrgSpeed = actDist/timeTaken;
-        if (roadDist > 0) optimalRouteDeviation = Math.max(0f, (actDist - roadDist) / roadDist);
+        if (optimalDist > 0) optimalRouteDeviation = Math.max(0f, (actDist - optimalDist) / optimalDist);
 
         float patienceScore = patience / patienceStart;
         float expectedTime = roadDist / targetSpeed;
@@ -145,7 +149,11 @@ public class Job {
         bonus = basePay * bonusMultiplier;
         System.out.println(bonus);
 
-        finalPay = Math.max(basePay, basePay + bonus);
+        if (basePay + bonus < 0) {
+            finalPay = basePay + bonusMultiplier;
+        } else {
+            finalPay = bonus + basePay;
+        }
 
         System.out.println(finalPay);
     }

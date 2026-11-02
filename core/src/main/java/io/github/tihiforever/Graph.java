@@ -150,4 +150,5 @@ public class Graph {
 
     public ArrayList<Node> getNodes() {return nodes;}
     public ArrayList<Edge> getEdges() {return edges;}
+    public float getCellSize() {return city.getCellSize();}
 }
