@@ -97,7 +97,7 @@ public class Taxi extends Car{
 
     public void dropoff(Graph graph, Job job){
         if (!job.isPickedUp() || job.isCompleted()) return;
-        if(graph.getClosestNode(x + width / 2f, y + height / 2f) == job.getPickup() && Vector2.dst(x + width / 2f, y + height / 2f, graph.getClosestNode(x + width / 2f, y + height / 2f).getX(), graph.getClosestNode(x + width / 2f, y + height / 2f).getY()) <= 60f){
+        if(graph.getClosestNode(x + width / 2f, y + height / 2f) == job.getDropoff() && Vector2.dst(x + width / 2f, y + height / 2f, graph.getClosestNode(x + width / 2f, y + height / 2f).getX(), graph.getClosestNode(x + width / 2f, y + height / 2f).getY()) <= 60f){
             job.setPickedUp(false);
             job.setDroppedOff(true);
             graph.getClosestNode(x + width / 2f, y + height / 2f).setHasJob(false);

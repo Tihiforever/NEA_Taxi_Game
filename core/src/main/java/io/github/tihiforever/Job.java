@@ -131,12 +131,22 @@ public class Job {
 
         float speedScore = clamp(avrgSpeed / targetSpeed, 0f, 1f);
 
-        float bonusMultiplier = patienceScore * patienceBonus + timeTaken * timeBonus + speedScore * speedBonus - numCollisions * collisionPenalty - optimalRouteDeviation * routePenalty;
+        float bonusMultiplier = (patienceScore * patienceBonus) + (timeTaken * timeBonus) + (speedScore * speedBonus) - (numCollisions * collisionPenalty) - (optimalRouteDeviation * routePenalty);
+
+        System.out.println(patienceScore);
+        System.out.println(expectedTime);
+        System.out.println(basePay);
+        System.out.println(timeTaken);
+        System.out.println(speedScore);
+        System.out.println(numCollisions);
+        System.out.println(optimalRouteDeviation);
+        System.out.println(bonusMultiplier);
 
         bonus = basePay * bonusMultiplier;
+        System.out.println(bonus);
 
-        bonus = Math.max(-basePay, bonus);
-        finalPay = Math.max(0f, basePay + bonus);
+        finalPay = Math.max(basePay, basePay + bonus);
+
         System.out.println(finalPay);
     }
 

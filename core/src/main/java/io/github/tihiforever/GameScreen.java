@@ -131,8 +131,8 @@ public class GameScreen extends ScreenAdapter {
 
     private void updateEntities(float delta) {
         taxi.update();
-        if (!job.isCompleted()) taxi.pickup(graph, job);
-        else taxi.dropoff(graph, job);
+        taxi.pickup(graph, job);
+        taxi.dropoff(graph, job);
         if (city.collidesWithBuilding(taxi.getHitbox())){
             taxi.resolveCollision();
             job.recordCollision();
