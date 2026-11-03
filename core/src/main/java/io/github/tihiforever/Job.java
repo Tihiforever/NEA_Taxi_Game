@@ -42,11 +42,11 @@ public class Job {
 
     // constants (still being adjusted)
     private final float minimumPatience = 200f;
-    private final float patiencePerExpectedSecond = 2f;
+    private final float patiencePerExpectedSecond = 4f;
 
-    private final float patienceLossTime = 0.5f;
+    private final float patienceLossTime = 0.75f;
     private final float patienceLossCollisions = 15f;
-    private final float baseFare = 20f;
+    private final float baseFare = 10f;
     private final float farePerRoadCell = 2f;
 
     private final float targetSpeed = 300f;
@@ -87,8 +87,7 @@ public class Job {
 
         float expectedTime = optimalDist / targetSpeed;
 
-        patienceStart = Math.max(minimumPatience, expectedTime * patiencePerExpectedSecond);
-        patience = patienceStart;
+        patience = expectedTime * patiencePerExpectedSecond;
 
         actDist = 0f;
         timeTaken = 0f;
@@ -100,7 +99,7 @@ public class Job {
     }
 
     public void update(float delta, Taxi taxi, City city){
-        if(completed || !pickedUp) return;
+        if(completed) return;
 
         float currentX = taxi.getX() + taxi.getWidth() / 2f;
         float currentY = taxi.getY() + taxi.getHeight() / 2f;
@@ -116,11 +115,16 @@ public class Job {
         }
 
         timeTaken += delta;
-        patience = Math.max(0f, patience - patienceLossTime * delta);
+
+        if (pickedUp) {
+            patience = Math.max(0f, patience - patienceLossTime * delta);
+        } else {
+            patience = Math.max(0f, patience - patienceLossTime * 0.5f * delta);
+        }
     }
 
     public void recordCollision(){
-        if (completed) return;
+        if (completed || !pickedUp) return;
 
         numCollisions++;
         patience = Math.max(0f, patience - patienceLossCollisions);
@@ -146,22 +150,7 @@ public class Job {
         bonus = basePay * bonusMultiplier;
         finalPay = Math.max(10f, basePay + bonus);
 
-        System.out.println(patienceScore);
-        System.out.println(expectedTime);
-        System.out.println(basePay);
-        System.out.println(timeTaken);
-        System.out.println(speedScore);
-        System.out.println(numCollisions);
-        System.out.println(optimalRouteDeviation);
-        System.out.println(bonusMultiplier);
-        System.out.println(bonus);
-        System.out.println(finalPay);
-
-        System.out.println("Actual distance: " + actDist);
-        System.out.println("Optimal distance: " + optimalDist);
-        System.out.println("Collision penalty: " + (numCollisions * collisionPenalty));
-        System.out.println("Route penalty: " + (optimalRouteDeviation * routePenalty));
-        System.out.println("Time score: " + timeTaken);
+        patience = patienceScore;
     }
 
     private float clamp(float value, float min, float max){

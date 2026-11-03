@@ -17,6 +17,7 @@ public class GameScreen extends ScreenAdapter {
     private Pathfinder pathfinder;
     private JobManager jobManager;
     private Random random;
+    private PlayerStats playerStats;
 
     private OrthographicCamera camera;
     private OrthographicCamera hudCamera;
@@ -34,6 +35,7 @@ public class GameScreen extends ScreenAdapter {
     private boolean visualisationEnabled = false;
 
     private boolean degbugMode = true;
+    private boolean showPlayerStats = false;
 
     public GameScreen(ScreenManager screenManager, Main main) {
         this.screenManager = screenManager;
@@ -47,6 +49,7 @@ public class GameScreen extends ScreenAdapter {
         pathfinder = new Pathfinder(graph);
         random = new Random();
         jobManager = new JobManager(graph, pathfinder, 10);
+        playerStats = new PlayerStats();
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
         if (!graph.getNodes().isEmpty()) {
@@ -89,6 +92,10 @@ public class GameScreen extends ScreenAdapter {
         }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.J) {
             screenManager.setScreen(Screen_Type.JOB_SCREEN);
+            inputHandeler.clearLastKeyPressed();
+        }
+        if (inputHandeler.getLastKeyPressed() == Input.Keys.H) {
+            showPlayerStats = !showPlayerStats;
             inputHandeler.clearLastKeyPressed();
         }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.TAB) {
@@ -137,8 +144,15 @@ public class GameScreen extends ScreenAdapter {
             taxi.pickup(graph, actvJob);
             taxi.dropoff(graph, actvJob);
 
-            if (city.collidesWithBuilding(taxi.getHitbox())) {
-                taxi.resolveCollision();
+            if(actvJob.isCompleted()){
+                playerStats.addMoney(actvJob.getFinalPay());
+                playerStats.addJobCompleted(actvJob.getPatience(), actvJob.getActDist());
+            }
+        }
+        if (city.collidesWithBuilding(taxi.getHitbox())) {
+            taxi.resolveCollision();
+
+            if (actvJob != null) {
                 actvJob.recordCollision();
             }
         }
@@ -183,7 +197,7 @@ public class GameScreen extends ScreenAdapter {
 
             main.getSr().setColor(Color.GREEN);
 
-            for (int i = 0; i < path.size(); i++) {
+            for (int i = 0; i < path.size() - 1; i++) {
                 Node a = path.get(i);
                 Node b = path.get(i + 1);
 
@@ -214,10 +228,29 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void drawHud() {
+        ShapeRenderer sr = main.getSr();
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        sr.setProjectionMatrix(hudCamera.combined);
+        sr.begin(ShapeRenderer.ShapeType.Filled);
+        sr.setColor(0, 0, 0, 0.7f);
+        if (showPlayerStats) {
+            sr.rect(15, Gdx.graphics.getHeight() - 205, 270, 190);
+        } else {
+            sr.rect(15, Gdx.graphics.getHeight() - 105, 270, 90);
+        }
+        sr.end();
+
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+
         main.getBatch().setProjectionMatrix(hudCamera.combined);
         main.getBatch().begin();
+
         main.getFont().getData().setScale(1);
-        main.getFont().draw(main.getBatch(), getInfoText(), 20, Gdx.graphics.getHeight() - 20);
+        main.getFont().draw(main.getBatch(), getInfoText(), 30, Gdx.graphics.getHeight() - 25);
+
         main.getBatch().end();
     }
 
@@ -231,11 +264,42 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private String getInfoText() {
-        if (taxi.getSpeed() > 0) return String.format("Speed: %.1f (forward)", taxi.getSpeed());
-        if (taxi.getSpeed() < 0) return String.format("Speed: %.1f (reverse)", taxi.getSpeed());
-        return "Speed: 0 (stopped)";
-    }
+        String info = "";
 
+        info += String.format("Speed: %.1f", taxi.getSpeed());
+
+        if (taxi.getSpeed() > 0) info += " (Forward)";
+        if (taxi.getSpeed() < 0) info += " (Reverse)";
+        if (taxi.getSpeed() == 0) info += " (Stopped)";
+
+        Job job = jobManager.getActvJob();
+
+        if (job == null) {
+            info += "\nNo Active Job";
+            info += "\nAvailable Jobs: " + jobManager.getJobs().size();
+        } else {
+            info += "\nObjective: ";
+
+            if (job.isPickedUp()) {
+                info += "Passenger Onboard";
+            } else {
+                info += "Collect Passenger";
+            }
+
+            info += "\nFare: £" + String.format("%.2f", job.getBasePay());
+            info += "\nPatience: " + String.format("%.0f", job.getPatience());
+        }
+
+        if (showPlayerStats) {
+            info += "\n\nPLAYER STATS";
+            info += "\nMoney: £" + String.format("%.2f", playerStats.getMoney());
+            info += "\nReputation: " + String.format("%.1f", playerStats.getReputation()) + "/5 Stars";
+            info += "\nJobs Completed: " + playerStats.getTotalJobsCompleted();
+            info += "\nDistance Driven: " + String.format("%.0f", playerStats.getTotalDistanceDriven());
+        }
+
+        return info;
+    }
 
     private void drawPathfindingVisualisation() {
         ShapeRenderer sr = main.getSr();

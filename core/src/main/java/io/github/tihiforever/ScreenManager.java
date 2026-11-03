@@ -30,7 +30,7 @@ public class ScreenManager{
                 currentScreen = new MainMenu(this, main);
                 break;
             case JOB_SCREEN:
-                currentScreen = new JobScreen(this, main, gamescreen.getJobManager());
+                currentScreen = new JobScreen(this, main, gameScreen.getJobManager());
                 break;
             case GAME_SCREEN:
                 if (gameScreen == null) gameScreen = new GameScreen(this, main);

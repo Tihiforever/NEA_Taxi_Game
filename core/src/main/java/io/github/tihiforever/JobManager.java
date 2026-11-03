@@ -25,6 +25,8 @@ public class JobManager {
             }
         }
 
+        if (availableNodes.size() < 2) return;
+
         Node pickup = availableNodes.remove(random.nextInt(availableNodes.size()));
         Node dropoff = availableNodes.get(random.nextInt(availableNodes.size()));
 
