@@ -68,14 +68,6 @@ public class ScreenManager{
         if (currentScreen != null) currentScreen.resize(width, height);
     }
 
-    public void pause() {
-        if (currentScreen != null) currentScreen.pause();
-    }
-
-    public void resume() {
-        if (currentScreen != null) currentScreen.resume();
-    }
-
     public void dispose() {
         if (currentScreen != null) {
             currentScreen.hide();
@@ -83,5 +75,5 @@ public class ScreenManager{
         }
     }
 
-
+    public GameScreen getGameScreen() {return gameScreen;}
 }

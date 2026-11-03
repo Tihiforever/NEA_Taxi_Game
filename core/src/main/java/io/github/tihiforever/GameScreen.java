@@ -91,6 +91,10 @@ public class GameScreen extends ScreenAdapter {
             screenManager.setScreen(Screen_Type.GAME_OVER);
             inputHandeler.clearLastKeyPressed();
         }
+        if (inputHandeler.getLastKeyPressed() == Input.Keys.X) {
+            screenManager.setScreen(Screen_Type.SETTINGS);
+            inputHandeler.clearLastKeyPressed();
+        }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.J) {
             screenManager.setScreen(Screen_Type.JOB_SCREEN);
             inputHandeler.clearLastKeyPressed();
@@ -209,20 +213,14 @@ public class GameScreen extends ScreenAdapter {
         taxi.draw(main.getSr(), Color.YELLOW);
         if (degbugMode) taxi.drawHitbox(main.getSr());
 
-        for (Job job : jobManager.getJobs()) {
-            if (!job.isPickedUp()) {
-                if (job == actvJob) {
-                    main.getSr().setColor(Color.YELLOW);
-                } else {
-                    main.getSr().setColor(Color.BLUE);
-                }
-
-                main.getSr().circle(job.getPickup().getX(), job.getPickup().getY(), 15);
-
+        if (actvJob != null) {
+            if (!actvJob.isPickedUp()) {
+                main.getSr().setColor(Color.YELLOW);
+                main.getSr().circle(actvJob.getPickup().getX(), actvJob.getPickup().getY(), 15);
+            } else {
+                main.getSr().setColor(Color.RED);
+                main.getSr().circle(actvJob.getDropoff().getX(), actvJob.getDropoff().getY(), 15);
             }
-            main.getSr().setColor(Color.RED);
-
-            main.getSr().circle(job.getDropoff().getX(), job.getDropoff().getY(), 15);
         }
 
         main.getSr().end();
@@ -287,7 +285,7 @@ public class GameScreen extends ScreenAdapter {
         if (job != null ){
 
             if (job.isPickedUp()) {
-                info += "Passenger Onboard";
+                info += "Deliver Customer";
             } else {
                 info += "Collect Passenger";
             }
@@ -295,7 +293,7 @@ public class GameScreen extends ScreenAdapter {
             info += "\nFare: £" + String.format("%.2f", job.getBasePay());
             info += "\nPatience: " + String.format("%.0f", job.getPatience());
         } else {
-            info += "Find Job";
+            info += "Find A Job";
         }
 
         if (showPlayerStats) {

@@ -12,6 +12,7 @@ public class JobManager {
     private Graph graph;
     private Pathfinder pathfinder;
     private int baseAmount;
+    private int nextJobNumber = 1;
 
     public JobManager(Graph graph, Pathfinder pathfinder, int amount) {
         this.graph = graph;
@@ -38,7 +39,11 @@ public class JobManager {
         Node pickup = availableNodes.remove(random.nextInt(availableNodes.size()));
         Node dropoff = availableNodes.get(random.nextInt(availableNodes.size()));
 
-        jobs.add(new Job(pickup, dropoff, graph, pathfinder));
+        Job job = new Job(pickup, dropoff, graph, pathfinder);
+        job.setJobNum(nextJobNumber);
+        nextJobNumber++;
+        jobs.add(job);
+
     }
 
     private void generateJobs(PlayerStats playerStats) {

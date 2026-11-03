@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class JobScreen extends ScreenAdapter {
     private enum SortType {
-        PICKUP, JOURNEY, TOTAL, PATIENCE, FARE
+        PICKUP, JOURNEY, TOTAL_DISTANCE, PATIENCE, FARE
     }
 
     private final ScreenManager screenManager;
@@ -72,7 +72,7 @@ public class JobScreen extends ScreenAdapter {
 
         if (sortType == SortType.PICKUP) return pickupDistances.get(index);
         if (sortType == SortType.JOURNEY) return job.getOptimalDist();
-        if (sortType == SortType.TOTAL) return pickupDistances.get(index) + job.getOptimalDist();
+        if (sortType == SortType.TOTAL_DISTANCE) return pickupDistances.get(index) + job.getOptimalDist();
         if (sortType == SortType.PATIENCE) return job.getPatience();
 
         return job.getBasePay();
@@ -87,7 +87,7 @@ public class JobScreen extends ScreenAdapter {
 
                 boolean swap = false;
 
-                if (sortType == SortType.PICKUP || sortType == SortType.JOURNEY || sortType == SortType.TOTAL) {
+                if (sortType == SortType.PICKUP || sortType == SortType.JOURNEY || sortType == SortType.TOTAL_DISTANCE) {
                     if (b < a) swap = true;
                 } else {
                     if (b > a) swap = true;
@@ -119,11 +119,11 @@ public class JobScreen extends ScreenAdapter {
 
         float buttonWidth = Math.min(900f, screenWidth - 40f);
 
-        Job activeJob = jobManager.getActvJob();
+        Job actvJob = jobManager.getActvJob();
 
         float sortY = screenHeight - 190f;
 
-        if (activeJob != null) {
+        if (actvJob != null) {
             sortY = screenHeight - 285f;
 
             activeJobButton.setX((screenWidth - buttonWidth) / 2f);
@@ -219,6 +219,19 @@ public class JobScreen extends ScreenAdapter {
 
         main.getFont().getData().setScale(1.3f);
 
+        if (actvJob != null) {
+            main.getFont().setColor(Color.BLACK);
+
+            String status = "PICKUP REQUIRED";
+
+            if (actvJob.isPickedUp()) status = "PASSENGER ONBOARD";
+
+            main.getFont().draw(main.getBatch(), "ACTIVE JOB " + actvJob.getJobNum() + " - " + status, activeJobButton.getX() + 10f, activeJobButton.getY() + 58f);
+            main.getFont().draw(main.getBatch(), "JOURNEY: " + String.format("%.0f", actvJob.getOptimalDist()) + "     PATIENCE: " + String.format("%.0f", actvJob.getPatience()) + "     FARE: £" + String.format("%.2f", actvJob.getBasePay()), activeJobButton.getX() + 10f, activeJobButton.getY() + 30f);
+
+            main.getFont().setColor(Color.WHITE);
+        }
+
         for (int i = 0; i < visibleJobs; i++) {
             Job job = displayJobs.get(i);
             Button button = buttons.get(i);
@@ -227,11 +240,11 @@ public class JobScreen extends ScreenAdapter {
             float journeyDistance = job.getOptimalDist();
             float totalDistance = pickupDistance + journeyDistance;
 
-            String firstLine = "Job " + (i + 1) + "        PICKUP: " + String.format("%.0f", pickupDistance) + "     JOURNEY: " + String.format("%.0f", journeyDistance);
-            String secondLine = "                 TOTAL: " + String.format("%.0f", totalDistance) + "     PATIENCE: " + String.format("%.0f", job.getPatience()) + "     FARE: £" + String.format("%.2f", job.getBasePay());
+            String firstLine = "Job " + job.getJobNum() + "              PICKUP: " + String.format("%.0f", pickupDistance) + "     JOURNEY: " + String.format("%.0f", journeyDistance);
+            String secondLine = "                       TOTAL DISTANCE: " + String.format("%.0f", totalDistance) + "     PATIENCE: " + String.format("%.0f", job.getPatience()) + "     FARE: £" + String.format("%.2f", job.getBasePay());
 
-            main.getFont().draw(main.getBatch(), firstLine, button.getX() + 20f, button.getY() + 48f);
-            main.getFont().draw(main.getBatch(), secondLine, button.getX() + 20f, button.getY() + 20f);
+            main.getFont().draw(main.getBatch(), firstLine, button.getX() + 10f, button.getY() + 58f);
+            main.getFont().draw(main.getBatch(), secondLine, button.getX() + 10f, button.getY() + 30f);
         }
 
         main.getFont().getData().setScale(1f);

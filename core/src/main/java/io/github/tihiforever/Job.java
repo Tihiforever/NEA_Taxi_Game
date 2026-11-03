@@ -12,6 +12,7 @@ public class Job {
     // job info
     private Node pickup;
     private Node dropoff;
+    private int jobNum;
 
     // distance stuff
     private float strDist;
@@ -193,4 +194,6 @@ public class Job {
     public void setPickedUp(boolean pickedUp) {this.pickedUp = pickedUp;}
     public boolean isDroppedOff() {return droppedOff;}
     public void setDroppedOff(boolean droppedOff) {this.droppedOff = droppedOff;}
+    public void setJobNum(int jobNum) {this.jobNum = jobNum;}
+    public int getJobNum() {return jobNum;}
 }

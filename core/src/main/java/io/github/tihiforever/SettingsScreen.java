@@ -10,6 +10,7 @@ public class SettingsScreen extends ScreenAdapter {
     private final ScreenManager screenManager;
     private final Main main;
     private final InputHandeler inputHandeler;
+    private Pathfinder pathfinder;
 
     private Button easyButton, normalButton, hardButton, smallResButton, medResButton, bigResButton;
 
@@ -17,7 +18,7 @@ public class SettingsScreen extends ScreenAdapter {
     private float buttonHeight = 45f;
     private float spacing = 45f;
 
-    public SettingsScreen(ScreenManager screenManager, Main main) {
+    public SettingsScreen(ScreenManager screenManager, Main main, Pathfinder pathfinder) {
         this.screenManager = screenManager;
         this.main = main;
 
@@ -118,7 +119,8 @@ public class SettingsScreen extends ScreenAdapter {
         System.out.println(screenHeight);
 
         if (inputHandeler.getLastKeyPressed() == Input.Keys.ENTER) {
-            screenManager.setScreen(Screen_Type.MAIN_MENU);
+            if (screenManager.getGameScreen() == null) screenManager.setScreen(Screen_Type.MAIN_MENU);
+            else screenManager.setScreen(Screen_Type.GAME_SCREEN);
             inputHandeler.clearLastKeyPressed();
         }
     }
