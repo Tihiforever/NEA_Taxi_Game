@@ -12,12 +12,12 @@ public class GameOverScreen extends ScreenAdapter {
     private final ScreenManager screenManager;
     private final Main main;
     private final InputHandeler inputHandeler;
+    private final int playerScore;
 
-    private int playerScore = 500;
-
-    public GameOverScreen(ScreenManager screenManager, Main main) {
+    public GameOverScreen(ScreenManager screenManager, Main main, int playerScore) {
         this.screenManager = screenManager;
         this.main = main;
+        this.playerScore = playerScore;
 
         inputHandeler = new InputHandeler();
         Gdx.input.setInputProcessor(inputHandeler);

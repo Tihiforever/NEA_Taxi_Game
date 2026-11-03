@@ -40,7 +40,14 @@ public class ScreenManager{
                 currentScreen = new SettingsScreen(this, main);
                 break;
             case GAME_OVER:
-                currentScreen = new GameOverScreen(this, main);
+                int score = 0;
+
+                if (gameScreen != null) {
+                    score = Math.round(gameScreen.getPlayerStats().getMoney());
+                }
+
+                currentScreen = new GameOverScreen(this, main, score);
+                gameScreen = null;
                 break;
             case LEADERBOARD:
                 currentScreen = new LeaderboardScreen(this, main);

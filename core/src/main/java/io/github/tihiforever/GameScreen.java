@@ -48,7 +48,7 @@ public class GameScreen extends ScreenAdapter {
         taxi = new Taxi(graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getX(),  graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getY(), inputHandeler);
         pathfinder = new Pathfinder(graph);
         random = new Random();
-        jobManager = new JobManager(graph, pathfinder, 10);
+        jobManager = new JobManager(graph, pathfinder, 20);
         playerStats = new PlayerStats();
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
@@ -236,10 +236,14 @@ public class GameScreen extends ScreenAdapter {
         sr.setProjectionMatrix(hudCamera.combined);
         sr.begin(ShapeRenderer.ShapeType.Filled);
         sr.setColor(0, 0, 0, 0.7f);
-        if (showPlayerStats) {
-            sr.rect(15, Gdx.graphics.getHeight() - 205, 270, 190);
-        } else {
+        if (jobManager.getActvJob() != null && showPlayerStats) {
+            sr.rect(15, Gdx.graphics.getHeight() - 210, 270, 195);
+        } else if (jobManager.getActvJob() == null && showPlayerStats) {
+            sr.rect(15, Gdx.graphics.getHeight() - 200, 270, 185);
+        } else if (jobManager.getActvJob() != null){
             sr.rect(15, Gdx.graphics.getHeight() - 105, 270, 90);
+        } else {
+            sr.rect(15, Gdx.graphics.getHeight() - 85, 270, 70);
         }
         sr.end();
 
@@ -275,10 +279,11 @@ public class GameScreen extends ScreenAdapter {
         Job job = jobManager.getActvJob();
 
         if (job == null) {
-            info += "\nNo Active Job";
             info += "\nAvailable Jobs: " + jobManager.getJobs().size();
-        } else {
-            info += "\nObjective: ";
+        }
+        info += "\nObjective: ";
+
+        if (job != null ){
 
             if (job.isPickedUp()) {
                 info += "Passenger Onboard";
@@ -288,6 +293,8 @@ public class GameScreen extends ScreenAdapter {
 
             info += "\nFare: £" + String.format("%.2f", job.getBasePay());
             info += "\nPatience: " + String.format("%.0f", job.getPatience());
+        } else {
+            info += "Find Job";
         }
 
         if (showPlayerStats) {
@@ -386,4 +393,5 @@ public class GameScreen extends ScreenAdapter {
     }
 
     public JobManager getJobManager() {return jobManager;}
+    public PlayerStats getPlayerStats() {return playerStats;}
 }

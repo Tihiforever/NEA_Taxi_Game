@@ -17,7 +17,10 @@ public class PlayerStats {
     }
 
     public float getMoney() {return money;}
-    public float getReputation() {return (totalReputation / totalJobsCompleted) * 5;}
+    public float getReputation() {
+        if (totalJobsCompleted == 0) return 0;
+        return (totalReputation / totalJobsCompleted) * 5;
+    }
     public int getTotalJobsCompleted() {return totalJobsCompleted;}
     public float getTotalDistanceDriven() {return totalDistanceDriven;}
 }

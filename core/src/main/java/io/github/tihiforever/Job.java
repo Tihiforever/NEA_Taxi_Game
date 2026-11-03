@@ -41,8 +41,7 @@ public class Job {
     private boolean droppedOff;
 
     // constants (still being adjusted)
-    private final float minimumPatience = 200f;
-    private final float patiencePerExpectedSecond = 4f;
+    private final float patiencePerExpectedSecond = 6f;
 
     private final float patienceLossTime = 0.75f;
     private final float patienceLossCollisions = 15f;
@@ -88,6 +87,7 @@ public class Job {
         float expectedTime = optimalDist / targetSpeed;
 
         patience = expectedTime * patiencePerExpectedSecond;
+        patienceStart = patience;
 
         actDist = 0f;
         timeTaken = 0f;
@@ -100,6 +100,11 @@ public class Job {
 
     public void update(float delta, Taxi taxi, City city){
         if(completed) return;
+
+        if (!pickedUp) {
+            patience = Math.max(0f, patience - patienceLossTime * 0.5f * delta);
+            return;
+        }
 
         float currentX = taxi.getX() + taxi.getWidth() / 2f;
         float currentY = taxi.getY() + taxi.getHeight() / 2f;
@@ -116,15 +121,11 @@ public class Job {
 
         timeTaken += delta;
 
-        if (pickedUp) {
-            patience = Math.max(0f, patience - patienceLossTime * delta);
-        } else {
-            patience = Math.max(0f, patience - patienceLossTime * 0.5f * delta);
-        }
+        patience = Math.max(0f, patience - patienceLossTime * delta);
     }
 
     public void recordCollision(){
-        if (completed || !pickedUp) return;
+        if (!pickedUp) return;
 
         numCollisions++;
         patience = Math.max(0f, patience - patienceLossCollisions);
@@ -136,11 +137,13 @@ public class Job {
         completed = true;
 
         if (timeTaken > 0f) avrgSpeed = actDist/timeTaken;
+
         if (optimalDist > 0) optimalRouteDeviation = Math.max(0f, (actDist - optimalDist) / optimalDist);
 
-        float patienceScore = patience / patienceStart;
-        float expectedTime = optimalDist / targetSpeed;
+        float patienceScore = 0f;
+        if (patienceStart > 0f) patienceScore = clamp(patience / patienceStart, 0f, 1f);
 
+        float expectedTime = optimalDist / targetSpeed;
         if (timeTaken > 0f && expectedTime > 0f) timeTaken = clamp(expectedTime / timeTaken, 0f, 1f);
 
         float speedScore = clamp(avrgSpeed / targetSpeed, 0f, 1f);
