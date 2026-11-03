@@ -156,6 +156,20 @@ public class Job {
         patience = patienceScore;
     }
 
+    public float getPickupDistance(float taxiX, float taxiY) {
+        ArrayList<Node> path = pathfinder.findPath(graph.getClosestNode(taxiX, taxiY), pickup);
+
+        if (path.isEmpty()) return Float.MAX_VALUE;
+
+        float distance = 0f;
+
+        for (int i = 0; i < path.size() - 1; i++) {
+            distance += graph.getDistance(path.get(i), path.get(i + 1));
+        }
+
+        return distance * graph.getCellSize();
+    }
+
     private float clamp(float value, float min, float max){
         return Math.max(min, Math.min(max, value));
     }
@@ -163,6 +177,7 @@ public class Job {
     public Node getPickup() {return pickup;}
     public Node getDropoff() {return dropoff;}
     public float getPatience() {return patience;}
+    public float getOptimalDist() {return optimalDist;}
     public float getStrDist() {return strDist;}
     public float getRoadDist() {return roadDist;}
     public float getActDist() {return actDist;}

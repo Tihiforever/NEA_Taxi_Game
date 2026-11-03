@@ -48,7 +48,7 @@ public class GameScreen extends ScreenAdapter {
         taxi = new Taxi(graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getX(),  graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getY(), inputHandeler);
         pathfinder = new Pathfinder(graph);
         random = new Random();
-        jobManager = new JobManager(graph, pathfinder, 20);
+        jobManager = new JobManager(graph, pathfinder, 5);
         playerStats = new PlayerStats();
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
@@ -63,6 +63,7 @@ public class GameScreen extends ScreenAdapter {
         camera = new OrthographicCamera();
         hudCamera = new OrthographicCamera();
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.input.setInputProcessor(inputHandeler);
     }
 
     @Override
@@ -156,7 +157,7 @@ public class GameScreen extends ScreenAdapter {
                 actvJob.recordCollision();
             }
         }
-        jobManager.update(delta, taxi, city);
+        jobManager.update(delta, taxi, city, playerStats);
 
         if (visualisationEnabled && !visualisationPaused && !pathfinder.isSearchFinished()) {
             searchTimer += delta;
@@ -394,4 +395,5 @@ public class GameScreen extends ScreenAdapter {
 
     public JobManager getJobManager() {return jobManager;}
     public PlayerStats getPlayerStats() {return playerStats;}
+    public Taxi getTaxi() {return taxi;}
 }

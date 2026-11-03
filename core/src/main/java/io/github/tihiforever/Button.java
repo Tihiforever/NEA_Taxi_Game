@@ -66,4 +66,7 @@ public class Button {
         this.y = y;
     }
     public float getY() {return y;}
+
+    public void setWidth(float width) {this.width = width;}
+    public void setHeight(float height) {this.height = height;}
 }
