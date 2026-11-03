@@ -208,6 +208,18 @@ public class GameScreen extends ScreenAdapter {
                 actvJob.recordCollision();
             }
         }
+        for (NPC npc : NPCManager.getNpcs()) {
+            if (taxi.getCollisionTimer() <= 0f && npc.getCollisionTimer() <= 0f && taxi.collidesWith(npc)) {
+                taxi.resolveCollision();
+                npc.resolveCollision();
+
+                if (actvJob != null) actvJob.recordCollision();
+            }
+
+            if (npc.getCollisionTimer() <= 0f && city.collidesWithBuilding(npc.getHitbox())) {
+                npc.resolveCollision();
+            }
+        }
         jobManager.update(delta, taxi, city, playerStats);
 
         if (visualisationEnabled && !visualisationPaused && !pathfinder.isSearchFinished()) {

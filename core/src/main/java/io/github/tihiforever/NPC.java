@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class NPC extends Car {
+
     private Graph graph;
     private Pathfinder pathfinder;
     private Random random = new Random();
@@ -16,7 +17,7 @@ public class NPC extends Car {
     private Node destinationNode;
 
     private ArrayList<Node> path;
-    private int currentWheypoint;
+    private int currentWaypoint;
 
     public NPC(Graph graph, Pathfinder pathfinder) {
         super(0, 0);
@@ -26,51 +27,10 @@ public class NPC extends Car {
 
         currentNode = graph.getNodes().get(random.nextInt(graph.getNodes().size()));
 
-        x = currentNode.getX() - width / 2f;
-        y = currentNode.getY() - height / 2f;
-        updateHitbox();
+        x = currentNode.getX();
+        y = currentNode.getY();
 
         chooseDestination();
-
-        if (path == null || path.size() < 2) return;
-
-        Node next = path.get(1);
-
-        float dx = next.getX() - currentNode.getX();
-        float dy = next.getY() - currentNode.getY();
-
-        rotation = MathUtils.atan2(dy, dx) * MathUtils.radiansToDegrees;
-        updateHitbox();
-    }
-
-    public void update(float delta) {
-        if (path == null || currentWheypoint >= path.size()) return;
-
-        savePreviousPosition();
-
-        Node target = path.get(currentWheypoint);
-
-        float dx = target.getX() - (x + width / 2f);
-        float dy = target.getY() - (y + height / 2f);
-        float distance = (float)Math.sqrt(dx * dx + dy * dy);
-
-        rotation = MathUtils.atan2(dy, dx) * MathUtils.radiansToDegrees;
-
-        float movement = 200f * delta;
-
-        if (distance <= movement) {
-            x = target.getX() - width / 2f;
-            y = target.getY() - height / 2f;
-
-            currentNode = target;
-            currentWheypoint++;
-
-            if (currentWheypoint >= path.size()) chooseDestination();
-        } else {
-            x += MathUtils.cosDeg(rotation) * movement;
-            y += MathUtils.sinDeg(rotation) * movement;
-        }
-
         updateHitbox();
     }
 
@@ -80,7 +40,53 @@ public class NPC extends Car {
         } while (destinationNode == currentNode);
 
         path = pathfinder.findPath(currentNode, destinationNode);
-        currentWheypoint = 1;
+        currentWaypoint = 0;
+    }
+
+    public void update(float dt) {
+        if (path == null || path.isEmpty()) return;
+
+        if (collisionTimer > 0) {
+            collisionTimer -= dt;
+            return;
+        }
+
+        Node target = path.get(currentWaypoint);
+
+        float dx = target.getX() - x;
+        float dy = target.getY() - y;
+
+        float distance = (float)Math.sqrt(dx * dx + dy * dy);
+
+        if (collisionTimer > 0) collisionTimer -= dt;
+
+        savePreviousPosition();
+
+        if (distance < 10) {
+            currentWaypoint++;
+
+            if (currentWaypoint >= path.size()) {
+                currentNode = destinationNode;
+                x = currentNode.getX();
+                y = currentNode.getY();
+                chooseDestination();
+                return;
+            }
+
+            target = path.get(currentWaypoint);
+            dx = target.getX() - x;
+            dy = target.getY() - y;
+        }
+
+        rotation = MathUtils.atan2(dy, dx) * MathUtils.radiansToDegrees;
+
+
+        if (collisionTimer <= 0) speed = 200;
+
+        x += MathUtils.cosDeg(rotation) * speed * dt;
+        y += MathUtils.sinDeg(rotation) * speed * dt;
+
+        updateHitbox();
     }
 
     public void draw(ShapeRenderer sr) {
