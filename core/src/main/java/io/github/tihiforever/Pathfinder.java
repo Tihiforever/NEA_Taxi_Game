@@ -15,6 +15,7 @@ public class Pathfinder {
 
     private boolean searchFinished;
     private boolean pathFound;
+    private boolean aStar;
 
 
     public Pathfinder(Graph graph) {
@@ -214,9 +215,10 @@ public class Pathfinder {
         java.util.Collections.reverse(currentPath);
     }
 
-    public ArrayList<Node> getCurrentPath(){return currentPath;}
-    public boolean isSearchFinished(){return searchFinished;}
-    public boolean isPathFound(){return pathFound;}
+    public ArrayList<Node> getCurrentPath() {return currentPath;}
+    public boolean isSearchFinished() {return searchFinished;}
+    public boolean isPathFound() {return pathFound;}
     public Node getCurrentNode() {return currentNode;}
-
+    public void setAStar(boolean aStar) {this.aStar = aStar;}
+    public boolean getaStar() {return aStar;}
 }

@@ -12,7 +12,7 @@ public class SettingsScreen extends ScreenAdapter {
     private final InputHandeler inputHandeler;
     private Pathfinder pathfinder;
 
-    private Button easyButton, normalButton, hardButton, smallResButton, medResButton, bigResButton;
+    private Button easyButton, normalButton, hardButton, smallResButton, medResButton, bigResButton, pathfinderButton;
 
     private float buttonWidth = 180f;
     private float buttonHeight = 45f;
@@ -21,9 +21,12 @@ public class SettingsScreen extends ScreenAdapter {
     public SettingsScreen(ScreenManager screenManager, Main main, Pathfinder pathfinder) {
         this.screenManager = screenManager;
         this.main = main;
+        this.pathfinder = pathfinder;
 
         inputHandeler = new InputHandeler();
         Gdx.input.setInputProcessor(inputHandeler);
+
+        String pathfinderText;
 
         easyButton = new Button(0, 0, buttonWidth, buttonHeight, "EASY", Color.DARK_GRAY, Color.LIGHT_GRAY);
         normalButton = new Button(0, 0, buttonWidth, buttonHeight, "NORMAL", Color.DARK_GRAY, Color.LIGHT_GRAY);
@@ -31,6 +34,14 @@ public class SettingsScreen extends ScreenAdapter {
         smallResButton = new Button(0, 0, buttonWidth, buttonHeight, "800 x 600", Color.DARK_GRAY, Color.LIGHT_GRAY);
         medResButton = new Button(0, 0, buttonWidth, buttonHeight, "1280 x 720", Color.DARK_GRAY, Color.LIGHT_GRAY);
         bigResButton = new Button(0, 0, buttonWidth, buttonHeight, "1820 x 980", Color.DARK_GRAY, Color.LIGHT_GRAY);
+
+        if (screenManager.getGameScreen() == null) {
+            pathfinderText = "Null";
+        } else {
+            if (pathfinder.getaStar()) pathfinderText = "A*";
+            else pathfinderText = "Dijkstra\'s";
+        }
+        pathfinderButton = new Button(0, 0, buttonWidth, buttonHeight, pathfinderText, Color.DARK_GRAY, Color.LIGHT_GRAY);
     }
 
     @Override
@@ -61,6 +72,9 @@ public class SettingsScreen extends ScreenAdapter {
         bigResButton.setX(settingsStartX + columnWidth + columnWidth / 2f - buttonWidth / 2f);
         bigResButton.setY(((screenHeight / 2f) + (spacing * 1.5f)) - 2 * (spacing + buttonHeight));
 
+        pathfinderButton.setX(settingsStartX + columnWidth + columnWidth + columnWidth / 2f - buttonWidth / 2f);
+        pathfinderButton.setY((screenHeight / 2f) + (spacing * 1.5f));
+
         // Clear the screen
         Gdx.gl.glClearColor(0.25f, 0.25f, 0.15f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -74,6 +88,7 @@ public class SettingsScreen extends ScreenAdapter {
         smallResButton.update(mouseX, mouseY);
         medResButton.update(mouseX, mouseY);
         bigResButton.update(mouseX, mouseY);
+        pathfinderButton.update(mouseX, mouseY);
 
         if (inputHandeler.isMouseClicked()) {
             if (easyButton.isClicked(mouseX, mouseY, true)) {
@@ -88,6 +103,9 @@ public class SettingsScreen extends ScreenAdapter {
                 Gdx.graphics.setWindowedMode(1280, 720);
             } else if (bigResButton.isClicked(mouseX, mouseY, true)) {
                 Gdx.graphics.setWindowedMode(1820, 980);
+            } else if (pathfinderButton.isClicked(mouseX, mouseY, true)) {
+                if (pathfinder.getaStar()) pathfinder.setAStar(false);
+                else pathfinder.setAStar(true);
             }
             inputHandeler.resetMouseClick();
         }
@@ -98,6 +116,7 @@ public class SettingsScreen extends ScreenAdapter {
         smallResButton.draw(main.getSr(), main.getBatch(), main.getFont());
         medResButton.draw(main.getSr(), main.getBatch(), main.getFont());
         bigResButton.draw(main.getSr(), main.getBatch(), main.getFont());
+        pathfinderButton.draw(main.getSr(), main.getBatch(), main.getFont());
 
         main.getBatch().begin();
 
@@ -107,7 +126,7 @@ public class SettingsScreen extends ScreenAdapter {
         main.getFont().getData().setScale(2.5f);
         main.getFont().draw(main.getBatch(), "DIFFICULTY", settingsStartX + columnWidth / 2f - 100f, (screenHeight / 2f) + 170f);
         main.getFont().draw(main.getBatch(), "RESOLUTION", settingsStartX + columnWidth + columnWidth / 2f - 100f, (screenHeight / 2f) + 170f);
-        main.getFont().draw(main.getBatch(), "KEY BINDS", settingsStartX + 2 * columnWidth + columnWidth / 2f - 100f, (screenHeight / 2f) + 170f);
+        main.getFont().draw(main.getBatch(), "PATHFINDING", settingsStartX + 2 * columnWidth + columnWidth / 2f - 100f, (screenHeight / 2f) + 170f);
         main.getFont().getData().setScale(1.5f);
         main.getFont().draw(main.getBatch(), "Current: " + main.getDifficulty(), settingsStartX + columnWidth / 2f - 85f, hardButton.getY() - 40f);
         main.getFont().draw(main.getBatch(), "Current: " + (int)screenWidth + " x " + (int)screenHeight, settingsStartX + columnWidth + columnWidth / 2f - 100f, bigResButton.getY() - 40f);

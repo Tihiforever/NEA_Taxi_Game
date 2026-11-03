@@ -392,6 +392,9 @@ public class GameScreen extends ScreenAdapter {
     }
 
     public JobManager getJobManager() {return jobManager;}
+    public City getCity() {return city;}
+    public Graph getGraph() {return graph;}
+    public Pathfinder getPathfinder() {return pathfinder;}
     public PlayerStats getPlayerStats() {return playerStats;}
     public Taxi getTaxi() {return taxi;}
 }
