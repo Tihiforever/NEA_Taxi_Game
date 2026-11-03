@@ -6,6 +6,8 @@ import com.badlogic.gdx.Screen;
 public class ScreenManager{
     private Screen currentScreen;
     private Main main;
+    private GameScreen gameScreen;
+
 
     public ScreenManager(Main main) {
         this.main = main;
@@ -28,10 +30,11 @@ public class ScreenManager{
                 currentScreen = new MainMenu(this, main);
                 break;
             case JOB_SCREEN:
-                currentScreen = new JobScreen(this, main);
+                currentScreen = new JobScreen(this, main, gamescreen.getJobManager());
                 break;
             case GAME_SCREEN:
-                currentScreen = new GameScreen(this, main);
+                if (gameScreen == null) gameScreen = new GameScreen(this, main);
+                currentScreen = gameScreen;
                 break;
             case SETTINGS:
                 currentScreen = new SettingsScreen(this, main);

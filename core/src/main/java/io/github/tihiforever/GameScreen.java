@@ -15,7 +15,7 @@ public class GameScreen extends ScreenAdapter {
     private City city;
     private Graph graph;
     private Pathfinder pathfinder;
-    private Job job;
+    private JobManager jobManager;
     private Random random;
 
     private OrthographicCamera camera;
@@ -46,7 +46,7 @@ public class GameScreen extends ScreenAdapter {
         taxi = new Taxi(graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getX(),  graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getY(), inputHandeler);
         pathfinder = new Pathfinder(graph);
         random = new Random();
-        job = new Job(graph.getNodes().get(random.nextInt(graph.getNodes().size())), graph.getNodes().get(random.nextInt(graph.getNodes().size())), graph, pathfinder);
+        jobManager = new JobManager(graph, pathfinder, 10);
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
         if (!graph.getNodes().isEmpty()) {
@@ -85,10 +85,6 @@ public class GameScreen extends ScreenAdapter {
     private void handleInput() {
         if (inputHandeler.getLastKeyPressed() == Input.Keys.Z) {
             screenManager.setScreen(Screen_Type.GAME_OVER);
-            inputHandeler.clearLastKeyPressed();
-        }
-        if (inputHandeler.getLastKeyPressed() == Input.Keys.X) {
-            job = new Job(graph.getNodes().get(random.nextInt(graph.getNodes().size())), graph.getNodes().get(random.nextInt(graph.getNodes().size())), graph, pathfinder);
             inputHandeler.clearLastKeyPressed();
         }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.J) {
@@ -135,12 +131,19 @@ public class GameScreen extends ScreenAdapter {
 
     private void updateEntities(float delta) {
         taxi.update();
-        taxi.pickup(graph, job);
-        taxi.dropoff(graph, job);
-        if (city.collidesWithBuilding(taxi.getHitbox())){
-            taxi.resolveCollision();
-            job.recordCollision();
+
+        Job actvJob = jobManager.getActvJob();
+        if (actvJob != null) {
+            taxi.pickup(graph, actvJob);
+            taxi.dropoff(graph, actvJob);
+
+            if (city.collidesWithBuilding(taxi.getHitbox())) {
+                taxi.resolveCollision();
+                actvJob.recordCollision();
+            }
         }
+        jobManager.update(delta, taxi, city);
+
         if (visualisationEnabled && !visualisationPaused && !pathfinder.isSearchFinished()) {
             searchTimer += delta;
 
@@ -148,9 +151,6 @@ public class GameScreen extends ScreenAdapter {
                 searchTimer = 0f;
                 pathfinder.stepSearch();
             }
-        }
-        if (job != null && !job.isCompleted()) {
-            job.update(delta, taxi, city);
         }
     }
 
@@ -163,50 +163,53 @@ public class GameScreen extends ScreenAdapter {
     private void drawWorld() {
         main.getSr().setProjectionMatrix(camera.combined);
         main.getSr().begin(ShapeRenderer.ShapeType.Filled);
+
         city.draw(main.getSr());
+
         if(degbugMode) graph.draw(main.getSr());
+
+        Job actvJob = jobManager.getActvJob();
+
         if (visualisationEnabled) {
             drawPathfindingVisualisation();
-        } else if (job.isPickedUp()){
-            ArrayList<Node> path = pathfinder.findPath(startNode, job.getDropoff());
+        } else if (actvJob != null) {
+            ArrayList<Node> path;
+
+            if (actvJob.isPickedUp()) {
+                path = pathfinder.findPath(startNode, actvJob.getDropoff());
+            } else {
+                path = pathfinder.findPath(startNode, actvJob.getPickup());
+            }
 
             main.getSr().setColor(Color.GREEN);
 
-            for(int i=0;i<path.size()-1;i++) {
+            for (int i = 0; i < path.size(); i++) {
                 Node a = path.get(i);
-                Node b = path.get(i+1);
+                Node b = path.get(i + 1);
 
                 main.getSr().rectLine(a.getX(), a.getY(), b.getX(), b.getY(), 8);
             }
-
-        } else {
-            ArrayList<Node> path = pathfinder.findPath(startNode, job.getPickup());
-
-            main.getSr().setColor(Color.GREEN);
-
-            for(int i=0;i<path.size()-1;i++) {
-                Node a = path.get(i);
-                Node b = path.get(i+1);
-
-                main.getSr().rectLine(a.getX(), a.getY(), b.getX(), b.getY(), 8);
-            }
-
-            main.getSr().setColor(Color.RED);
-            main.getSr().circle(startNode.getX(), startNode.getY(), 12);
-
-            main.getSr().setColor(Color.BLUE);
-            main.getSr().circle(endNode.getX(), endNode.getY(), 12);
         }
+
         taxi.draw(main.getSr(), Color.YELLOW);
         if (degbugMode) taxi.drawHitbox(main.getSr());
-        for (Node node : graph.getNodes()){
-            if (node.isHasJob()){
-                if (node == job.getPickup()) main.getSr().setColor(Color.YELLOW);
-                else if (node == job.getDropoff()) main.getSr().setColor(Color.RED);
 
-                main.getSr().circle(node.getX(), node.getY(), 15);
+        for (Job job : jobManager.getJobs()) {
+            if (!job.isPickedUp()) {
+                if (job == actvJob) {
+                    main.getSr().setColor(Color.YELLOW);
+                } else {
+                    main.getSr().setColor(Color.BLUE);
+                }
+
+                main.getSr().circle(job.getPickup().getX(), job.getPickup().getY(), 15);
+
             }
+            main.getSr().setColor(Color.RED);
+
+            main.getSr().circle(job.getDropoff().getX(), job.getDropoff().getY(), 15);
         }
+
         main.getSr().end();
     }
 
@@ -232,7 +235,6 @@ public class GameScreen extends ScreenAdapter {
         if (taxi.getSpeed() < 0) return String.format("Speed: %.1f (reverse)", taxi.getSpeed());
         return "Speed: 0 (stopped)";
     }
-
 
 
     private void drawPathfindingVisualisation() {
@@ -318,4 +320,6 @@ public class GameScreen extends ScreenAdapter {
             sr.circle(endNode.getX(), endNode.getY(), 17);
         }
     }
+
+    public JobManager getJobManager() {return jobManager;}
 }
