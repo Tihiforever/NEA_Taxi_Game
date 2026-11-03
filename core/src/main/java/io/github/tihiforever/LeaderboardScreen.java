@@ -1,6 +1,7 @@
 package io.github.tihiforever;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -54,9 +55,9 @@ public class LeaderboardScreen extends ScreenAdapter {
         main.getBatch().end();
 
 
-        if(inputHandeler.isMouseClicked()){
+        if(inputHandeler.getLastKeyPressed() == Input.Keys.ENTER) {
             screenManager.setScreen(Screen_Type.MAIN_MENU);
-            inputHandeler.resetMouseClick();
+            inputHandeler.clearLastKeyPressed();
         }
     }
 

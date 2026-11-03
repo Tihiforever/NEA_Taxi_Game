@@ -16,7 +16,7 @@ public class GameScreen extends ScreenAdapter {
     private Graph graph;
     private Pathfinder pathfinder;
     private JobManager jobManager;
-    private Random random;
+    private MiniMap miniMap;
     private PlayerStats playerStats;
 
     private OrthographicCamera camera;
@@ -28,6 +28,7 @@ public class GameScreen extends ScreenAdapter {
 
     private Node startNode;
     private Node endNode;
+    private ArrayList<Node> currentPath = new ArrayList<>();
 
     private float searchTimer = 0f;
     private float secondsPerStep = 0.15f;
@@ -36,6 +37,7 @@ public class GameScreen extends ScreenAdapter {
 
     private boolean degbugMode = true;
     private boolean showPlayerStats = false;
+    private boolean showMiniMap = true;
 
     public GameScreen(ScreenManager screenManager, Main main) {
         this.screenManager = screenManager;
@@ -47,9 +49,9 @@ public class GameScreen extends ScreenAdapter {
         graph = new Graph(city);
         taxi = new Taxi(graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getX(),  graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getY(), inputHandeler);
         pathfinder = new Pathfinder(graph);
-        random = new Random();
         jobManager = new JobManager(graph, pathfinder, 5);
         playerStats = new PlayerStats();
+        miniMap = new MiniMap(city, taxi);
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
         if (!graph.getNodes().isEmpty()) {
@@ -70,7 +72,10 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
-        startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
+
+        if (!visualisationEnabled) {
+            startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
+        }
 
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.15f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -99,8 +104,35 @@ public class GameScreen extends ScreenAdapter {
             screenManager.setScreen(Screen_Type.JOB_SCREEN);
             inputHandeler.clearLastKeyPressed();
         }
+        if (inputHandeler.getLastKeyPressed() == Input.Keys.M) {
+            showMiniMap = !showMiniMap;
+            inputHandeler.clearLastKeyPressed();
+        }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.H) {
             showPlayerStats = !showPlayerStats;
+            inputHandeler.clearLastKeyPressed();
+        }
+        if (inputHandeler.getLastKeyPressed() == Input.Keys.F) {
+            if (jobManager.getActvJob() == null && !visualisationEnabled) {
+                Job nearestJob = null;
+
+                float shrtDist = Float.MAX_VALUE;
+
+                float taxiX = taxi.getX() + taxi.getWidth() / 2f;
+                float taxiY = taxi.getY() + taxi.getHeight() / 2f;
+
+                for (Job job : jobManager.getJobs()) {
+                    float dist = job.getPickupDistance(taxiX, taxiY);
+
+                    if (dist < shrtDist) {
+                        shrtDist = dist;
+                        nearestJob = job;
+                    }
+                }
+
+                if (nearestJob != null) jobManager.acceptJob(nearestJob);
+            }
+
             inputHandeler.clearLastKeyPressed();
         }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.TAB) {
@@ -129,10 +161,22 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.P) {
+            if (startNode != null && endNode != null) {
+                searchTimer = 0f;
+                visualisationPaused = false;
+
+                pathfinder.startSearch(startNode, endNode);
+            }
+
+            inputHandeler.clearLastKeyPressed();
+        }
+        if (inputHandeler.getLastKeyPressed() == Input.Keys.R) {
             if (!graph.getNodes().isEmpty()) {
+                startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
                 endNode = graph.getNodes().get((int) (Math.random() * graph.getNodes().size()));
 
                 searchTimer = 0f;
+                visualisationPaused = false;
                 pathfinder.startSearch(startNode, endNode);
             }
 
@@ -180,6 +224,8 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void drawWorld() {
+        if (!visualisationEnabled) currentPath.clear();
+
         main.getSr().setProjectionMatrix(camera.combined);
         main.getSr().begin(ShapeRenderer.ShapeType.Filled);
 
@@ -190,21 +236,20 @@ public class GameScreen extends ScreenAdapter {
         Job actvJob = jobManager.getActvJob();
 
         if (visualisationEnabled) {
+            currentPath = pathfinder.getCurrentPath();
             drawPathfindingVisualisation();
         } else if (actvJob != null) {
-            ArrayList<Node> path;
-
             if (actvJob.isPickedUp()) {
-                path = pathfinder.findPath(startNode, actvJob.getDropoff());
+                currentPath = pathfinder.findPath(startNode, actvJob.getDropoff());
             } else {
-                path = pathfinder.findPath(startNode, actvJob.getPickup());
+                currentPath = pathfinder.findPath(startNode, actvJob.getPickup());
             }
 
             main.getSr().setColor(Color.GREEN);
 
-            for (int i = 0; i < path.size() - 1; i++) {
-                Node a = path.get(i);
-                Node b = path.get(i + 1);
+            for (int i = 0; i < currentPath.size() - 1; i++) {
+                Node a = currentPath.get(i);
+                Node b = currentPath.get(i + 1);
 
                 main.getSr().rectLine(a.getX(), a.getY(), b.getX(), b.getY(), 8);
             }
@@ -213,12 +258,12 @@ public class GameScreen extends ScreenAdapter {
         taxi.draw(main.getSr(), Color.YELLOW);
         if (degbugMode) taxi.drawHitbox(main.getSr());
 
+        main.getSr().setColor(Color.PINK);
+
         if (actvJob != null) {
             if (!actvJob.isPickedUp()) {
-                main.getSr().setColor(Color.YELLOW);
                 main.getSr().circle(actvJob.getPickup().getX(), actvJob.getPickup().getY(), 15);
             } else {
-                main.getSr().setColor(Color.RED);
                 main.getSr().circle(actvJob.getDropoff().getX(), actvJob.getDropoff().getY(), 15);
             }
         }
@@ -244,6 +289,9 @@ public class GameScreen extends ScreenAdapter {
         } else {
             sr.rect(15, Gdx.graphics.getHeight() - 85, 270, 70);
         }
+
+        if (showMiniMap) miniMap.draw(sr, jobManager.getActvJob(), currentPath, graph, pathfinder, visualisationEnabled, endNode, startNode);
+
         sr.end();
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
@@ -386,7 +434,7 @@ public class GameScreen extends ScreenAdapter {
             sr.setColor(Color.BLACK);
             sr.circle(endNode.getX(), endNode.getY(), 23);
 
-            sr.setColor(Color.RED);
+            sr.setColor(Color.WHITE);
             sr.circle(endNode.getX(), endNode.getY(), 17);
         }
     }

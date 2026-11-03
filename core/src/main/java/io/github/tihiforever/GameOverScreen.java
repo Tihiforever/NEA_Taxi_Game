@@ -44,9 +44,10 @@ public class GameOverScreen extends ScreenAdapter {
         main.getBatch().end();
 
 
-        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
+        if(inputHandeler.getLastKeyPressed() == Input.Keys.ENTER){
             writeToFile(inputHandeler.getPlayerName(), playerScore);
             screenManager.setScreen(Screen_Type.TITLE);
+            inputHandeler.clearLastKeyPressed();
         }
     }
 

@@ -102,13 +102,13 @@ public class TitleScreen extends ScreenAdapter {
         //start
         main.getFont().getData().setScale(scale/3);
         main.getFont().setColor(Color.WHITE);
-        main.getFont().draw(main.getBatch(), "TOUCH TO START", screenWidth / 2f - 100f, screenHeight / 2f - 90f);
+        main.getFont().draw(main.getBatch(), "PRESS ENTER TO START", screenWidth / 2f - 100f, screenHeight / 2f - 90f);
 
         main.getBatch().end();
 
-        if(inputHandeler.isMouseClicked()){
+        if(inputHandeler.getLastKeyPressed() == Input.Keys.ENTER){
             screenManager.setScreen(Screen_Type.MAIN_MENU);
-            inputHandeler.resetMouseClick();
+            inputHandeler.clearLastKeyPressed();
         }
     }
 
