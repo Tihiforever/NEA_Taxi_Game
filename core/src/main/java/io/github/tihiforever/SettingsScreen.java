@@ -12,7 +12,7 @@ public class SettingsScreen extends ScreenAdapter {
     private final InputHandeler inputHandeler;
     private Pathfinder pathfinder;
 
-    private Button easyButton, normalButton, hardButton, smallResButton, medResButton, bigResButton, pathfinderButton;
+    private Button easyButton, normalButton, hardButton, smallResButton, medResButton, bigResButton, AStarButton, dijkstrasButton;
 
     private float buttonWidth = 180f;
     private float buttonHeight = 45f;
@@ -34,14 +34,8 @@ public class SettingsScreen extends ScreenAdapter {
         smallResButton = new Button(0, 0, buttonWidth, buttonHeight, "800 x 600", Color.DARK_GRAY, Color.LIGHT_GRAY);
         medResButton = new Button(0, 0, buttonWidth, buttonHeight, "1280 x 720", Color.DARK_GRAY, Color.LIGHT_GRAY);
         bigResButton = new Button(0, 0, buttonWidth, buttonHeight, "1820 x 980", Color.DARK_GRAY, Color.LIGHT_GRAY);
-
-        if (screenManager.getGameScreen() == null) {
-            pathfinderText = "Null";
-        } else {
-            if (pathfinder.getaStar()) pathfinderText = "A*";
-            else pathfinderText = "Dijkstra\'s";
-        }
-        pathfinderButton = new Button(0, 0, buttonWidth, buttonHeight, pathfinderText, Color.DARK_GRAY, Color.LIGHT_GRAY);
+        AStarButton = new Button(0, 0, buttonWidth, buttonHeight, "A STAR", Color.DARK_GRAY, Color.LIGHT_GRAY);
+        dijkstrasButton = new Button(0, 0, buttonWidth, buttonHeight, "DIJKSTRAS", Color.DARK_GRAY, Color.LIGHT_GRAY);
     }
 
     @Override
@@ -72,8 +66,11 @@ public class SettingsScreen extends ScreenAdapter {
         bigResButton.setX(settingsStartX + columnWidth + columnWidth / 2f - buttonWidth / 2f);
         bigResButton.setY(((screenHeight / 2f) + (spacing * 1.5f)) - 2 * (spacing + buttonHeight));
 
-        pathfinderButton.setX(settingsStartX + columnWidth + columnWidth + columnWidth / 2f - buttonWidth / 2f);
-        pathfinderButton.setY((screenHeight / 2f) + (spacing * 1.5f));
+        AStarButton.setX(settingsStartX + columnWidth + columnWidth + columnWidth / 2f - buttonWidth / 2f);
+        AStarButton.setY((screenHeight / 2f) + (spacing * 1.5f));
+
+        dijkstrasButton.setX(settingsStartX + columnWidth + columnWidth + columnWidth / 2f - buttonWidth / 2f);
+        dijkstrasButton.setY((screenHeight / 2f) + (spacing * 1.5f) - (spacing + buttonHeight));
 
         // Clear the screen
         Gdx.gl.glClearColor(0.25f, 0.25f, 0.15f, 1);
@@ -88,7 +85,8 @@ public class SettingsScreen extends ScreenAdapter {
         smallResButton.update(mouseX, mouseY);
         medResButton.update(mouseX, mouseY);
         bigResButton.update(mouseX, mouseY);
-        pathfinderButton.update(mouseX, mouseY);
+        AStarButton.update(mouseX, mouseY);
+        dijkstrasButton.update(mouseX, mouseY);
 
         if (inputHandeler.isMouseClicked()) {
             if (easyButton.isClicked(mouseX, mouseY, true)) {
@@ -103,9 +101,10 @@ public class SettingsScreen extends ScreenAdapter {
                 Gdx.graphics.setWindowedMode(1280, 720);
             } else if (bigResButton.isClicked(mouseX, mouseY, true)) {
                 Gdx.graphics.setWindowedMode(1820, 980);
-            } else if (pathfinderButton.isClicked(mouseX, mouseY, true)) {
-                if (pathfinder.getaStar()) pathfinder.setAStar(false);
-                else pathfinder.setAStar(true);
+            } else if (AStarButton.isClicked(mouseX, mouseY, true)) {
+                if (pathfinder != null) pathfinder.setAStar(true);
+            } else if (dijkstrasButton.isClicked(mouseX, mouseY, true)) {
+                if (pathfinder != null) pathfinder.setAStar(false);
             }
             inputHandeler.resetMouseClick();
         }
@@ -116,7 +115,9 @@ public class SettingsScreen extends ScreenAdapter {
         smallResButton.draw(main.getSr(), main.getBatch(), main.getFont());
         medResButton.draw(main.getSr(), main.getBatch(), main.getFont());
         bigResButton.draw(main.getSr(), main.getBatch(), main.getFont());
-        pathfinderButton.draw(main.getSr(), main.getBatch(), main.getFont());
+        AStarButton.draw(main.getSr(), main.getBatch(), main.getFont());
+        dijkstrasButton.draw(main.getSr(), main.getBatch(), main.getFont());
+
 
         main.getBatch().begin();
 
@@ -130,12 +131,9 @@ public class SettingsScreen extends ScreenAdapter {
         main.getFont().getData().setScale(1.5f);
         main.getFont().draw(main.getBatch(), "Current: " + main.getDifficulty(), settingsStartX + columnWidth / 2f - 85f, hardButton.getY() - 40f);
         main.getFont().draw(main.getBatch(), "Current: " + (int)screenWidth + " x " + (int)screenHeight, settingsStartX + columnWidth + columnWidth / 2f - 100f, bigResButton.getY() - 40f);
+        main.getFont().draw(main.getBatch(), "Current: " + main.getDifficulty(), settingsStartX + columnWidth + columnWidth + columnWidth / 2f - 75f, hardButton.getY() - 40f);
 
         main.getBatch().end();
-
-        System.out.println(main.getDifficulty());
-        System.out.println(screenWidth);
-        System.out.println(screenHeight);
 
         if (inputHandeler.getLastKeyPressed() == Input.Keys.ENTER) {
             if (screenManager.getGameScreen() == null) screenManager.setScreen(Screen_Type.MAIN_MENU);

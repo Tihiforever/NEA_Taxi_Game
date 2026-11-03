@@ -20,6 +20,7 @@ public class Pathfinder {
 
     public Pathfinder(Graph graph) {
         this.graph = graph;
+        aStar = true;
     }
 
     public ArrayList<Node> findPath(Node start, Node end) {

@@ -37,7 +37,11 @@ public class ScreenManager{
                 currentScreen = gameScreen;
                 break;
             case SETTINGS:
-                currentScreen = new SettingsScreen(this, main, gameScreen.getPathfinder());
+                if (gameScreen == null) {
+                    currentScreen = new SettingsScreen(this, main, null);
+                } else {
+                    currentScreen = new SettingsScreen(this, main, gameScreen.getPathfinder());
+                }
                 break;
             case GAME_OVER:
                 int score = 0;
