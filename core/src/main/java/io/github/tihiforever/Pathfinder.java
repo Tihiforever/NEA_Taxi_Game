@@ -114,6 +114,8 @@ public class Pathfinder {
     }
 
     private float heuristic(Node a, Node b) {
+        if (!aStar) return 0;
+
         return Math.abs(a.getRow() - b.getRow()) + Math.abs(a.getCol() - b.getCol());
     }
 

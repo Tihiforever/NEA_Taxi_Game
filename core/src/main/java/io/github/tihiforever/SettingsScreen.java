@@ -18,6 +18,8 @@ public class SettingsScreen extends ScreenAdapter {
     private float buttonHeight = 45f;
     private float spacing = 45f;
 
+    private String pathfinderText;
+
     public SettingsScreen(ScreenManager screenManager, Main main, Pathfinder pathfinder) {
         this.screenManager = screenManager;
         this.main = main;
@@ -25,8 +27,6 @@ public class SettingsScreen extends ScreenAdapter {
 
         inputHandeler = new InputHandeler();
         Gdx.input.setInputProcessor(inputHandeler);
-
-        String pathfinderText;
 
         easyButton = new Button(0, 0, buttonWidth, buttonHeight, "EASY", Color.DARK_GRAY, Color.LIGHT_GRAY);
         normalButton = new Button(0, 0, buttonWidth, buttonHeight, "NORMAL", Color.DARK_GRAY, Color.LIGHT_GRAY);
@@ -40,6 +40,13 @@ public class SettingsScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta){
+        if (screenManager.getGameScreen() == null) {
+            pathfinderText = "Null";
+        } else {
+            if (pathfinder.getaStar()) pathfinderText = "A*";
+            else pathfinderText = "Dijkstra\'s";
+        }
+
         float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
 
@@ -131,7 +138,7 @@ public class SettingsScreen extends ScreenAdapter {
         main.getFont().getData().setScale(1.5f);
         main.getFont().draw(main.getBatch(), "Current: " + main.getDifficulty(), settingsStartX + columnWidth / 2f - 85f, hardButton.getY() - 40f);
         main.getFont().draw(main.getBatch(), "Current: " + (int)screenWidth + " x " + (int)screenHeight, settingsStartX + columnWidth + columnWidth / 2f - 100f, bigResButton.getY() - 40f);
-        main.getFont().draw(main.getBatch(), "Current: " + main.getDifficulty(), settingsStartX + columnWidth + columnWidth + columnWidth / 2f - 75f, hardButton.getY() - 40f);
+        main.getFont().draw(main.getBatch(), "Current: " + pathfinderText, settingsStartX + columnWidth + columnWidth + columnWidth / 2f - 75f, hardButton.getY() - 40f);
 
         main.getBatch().end();
 
