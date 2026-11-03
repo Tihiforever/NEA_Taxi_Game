@@ -18,6 +18,7 @@ public class GameScreen extends ScreenAdapter {
     private JobManager jobManager;
     private MiniMap miniMap;
     private PlayerStats playerStats;
+    private NPCManager npcManager;
 
     private OrthographicCamera camera;
     private OrthographicCamera hudCamera;
@@ -52,6 +53,7 @@ public class GameScreen extends ScreenAdapter {
         jobManager = new JobManager(graph, pathfinder, 5);
         playerStats = new PlayerStats();
         miniMap = new MiniMap(city, taxi);
+        npcManager = new NPCManager(graph, pathfinder, 10);
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
         if (!graph.getNodes().isEmpty()) {
@@ -187,6 +189,7 @@ public class GameScreen extends ScreenAdapter {
 
     private void updateEntities(float delta) {
         taxi.update();
+        if (!visualisationEnabled) npcManager.update(delta);
 
         Job actvJob = jobManager.getActvJob();
         if (actvJob != null) {
@@ -254,6 +257,8 @@ public class GameScreen extends ScreenAdapter {
                 main.getSr().rectLine(a.getX(), a.getY(), b.getX(), b.getY(), 8);
             }
         }
+
+        if (!visualisationEnabled) npcManager.draw(main.getSr());
 
         taxi.draw(main.getSr(), Color.YELLOW);
         if (degbugMode) taxi.drawHitbox(main.getSr());
