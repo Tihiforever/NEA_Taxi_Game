@@ -53,7 +53,7 @@ public class GameScreen extends ScreenAdapter {
         jobManager = new JobManager(graph, pathfinder, 5);
         playerStats = new PlayerStats();
         miniMap = new MiniMap(city, taxi);
-        npcManager = new NPCManager(graph, pathfinder, 10);
+        npcManager = new NPCManager(graph, pathfinder, city.getMapSize() * 4);
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
         if (!graph.getNodes().isEmpty()) {
@@ -87,7 +87,7 @@ public class GameScreen extends ScreenAdapter {
 
         handleInput();
         updateEntities(delta);
-        updateCamera(delta);
+        updateCamera();
         drawWorld();
         drawHud();
     }
@@ -100,6 +100,11 @@ public class GameScreen extends ScreenAdapter {
         }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.X) {
             screenManager.setScreen(Screen_Type.SETTINGS);
+            inputHandeler.clearLastKeyPressed();
+        }
+        if (inputHandeler.getLastKeyPressed() == Input.Keys.R) {
+            taxi.setX(graph.getClosestNode(taxi.getX(), taxi.getY()).getX() - taxi.getWidth());
+            taxi.setY(graph.getClosestNode(taxi.getX(), taxi.getY()).getY() - taxi.getHeight());
             inputHandeler.clearLastKeyPressed();
         }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.J) {
@@ -232,7 +237,7 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
-    private void updateCamera(float delta) {
+    private void updateCamera() {
         camera.position.x += (taxi.getX() + taxi.getWidth() / 2f - camera.position.x) * 0.12f;
         camera.position.y += (taxi.getY() + taxi.getHeight() / 2f - camera.position.y) * 0.12f;
         camera.update();

@@ -39,7 +39,7 @@ public class Car {
         width = 46;
         height = 82;
 
-        hitbox = new Polygon(new float[] {5, 5, width - 5, 5, width - 5, height - 5, 5, height - 5});
+        hitbox = new Polygon(new float[] {8, 11, width - 8, 11, width - 8, height - 11, 8, height - 11});
         hitbox.setOrigin(width / 2f, height / 2f);
     }
 
@@ -80,7 +80,7 @@ public class Car {
         rotation = previousRotation;
 
         updateHitbox();
-        bounce(-speed * 0.2f);
+        bounce(-speed * 0.5f);
     }
 
     public float getCollisionTimer() {

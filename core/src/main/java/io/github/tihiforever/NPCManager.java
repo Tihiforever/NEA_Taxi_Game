@@ -30,8 +30,5 @@ public class NPCManager {
     public static ArrayList<NPC> getNpcs() {
         return npcs;
     }
-
-    public void setNpcs(ArrayList<NPC> npcs) {
-        this.npcs = npcs;
-    }
+    public void setNpcs(ArrayList<NPC> npcs) {this.npcs = npcs;}
 }

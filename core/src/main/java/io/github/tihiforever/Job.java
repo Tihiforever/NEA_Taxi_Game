@@ -45,7 +45,7 @@ public class Job {
     private final float patiencePerExpectedSecond = 6f;
 
     private final float patienceLossTime = 0.75f;
-    private final float patienceLossCollisions = 15f;
+    private final float patienceLossCollisions = 8f;
     private final float baseFare = 10f;
     private final float farePerRoadCell = 2f;
 

@@ -48,6 +48,11 @@ public class NPC extends Car {
 
         if (collisionTimer > 0) {
             collisionTimer -= dt;
+
+            x += MathUtils.cosDeg(rotation) * speed * dt;
+            y += MathUtils.sinDeg(rotation) * speed * dt;
+
+            updateHitbox();
             return;
         }
 
@@ -62,7 +67,7 @@ public class NPC extends Car {
 
         savePreviousPosition();
 
-        if (distance < 10) {
+        if (distance <= 5) {
             currentWaypoint++;
 
             if (currentWaypoint >= path.size()) {
@@ -80,8 +85,8 @@ public class NPC extends Car {
 
         rotation = MathUtils.atan2(dy, dx) * MathUtils.radiansToDegrees;
 
-
         if (collisionTimer <= 0) speed = 200;
+        else if (collisionTimer >= 0) speed = 0;
 
         x += MathUtils.cosDeg(rotation) * speed * dt;
         y += MathUtils.sinDeg(rotation) * speed * dt;
@@ -89,7 +94,5 @@ public class NPC extends Car {
         updateHitbox();
     }
 
-    public void draw(ShapeRenderer sr) {
-        super.draw(sr, Color.RED);
-    }
+    public void draw(ShapeRenderer sr) {super.draw(sr, Color.RED);}
 }
