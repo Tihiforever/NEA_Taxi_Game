@@ -85,8 +85,7 @@ public class NPC extends Car {
 
         rotation = MathUtils.atan2(dy, dx) * MathUtils.radiansToDegrees;
 
-        if (collisionTimer <= 0) speed = 200;
-        else if (collisionTimer >= 0) speed = 0;
+        if (collisionTimer <= 0f) speed = 300f;
 
         x += MathUtils.cosDeg(rotation) * speed * dt;
         y += MathUtils.sinDeg(rotation) * speed * dt;

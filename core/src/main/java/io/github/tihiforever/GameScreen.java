@@ -53,7 +53,7 @@ public class GameScreen extends ScreenAdapter {
         jobManager = new JobManager(graph, pathfinder, 5);
         playerStats = new PlayerStats();
         miniMap = new MiniMap(city, taxi);
-        npcManager = new NPCManager(graph, pathfinder, city.getMapSize() * 4);
+        npcManager = new NPCManager(graph, pathfinder, graph.getNodes().size() / 2);
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
         if (!graph.getNodes().isEmpty()) {
@@ -105,6 +105,8 @@ public class GameScreen extends ScreenAdapter {
         if (inputHandeler.getLastKeyPressed() == Input.Keys.R) {
             taxi.setX(graph.getClosestNode(taxi.getX(), taxi.getY()).getX() - taxi.getWidth());
             taxi.setY(graph.getClosestNode(taxi.getX(), taxi.getY()).getY() - taxi.getHeight());
+            taxi.setSpeed(0);
+            taxi.getHitbox().setPosition(taxi.getX(), taxi.getY());
             inputHandeler.clearLastKeyPressed();
         }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.J) {
@@ -177,7 +179,7 @@ public class GameScreen extends ScreenAdapter {
 
             inputHandeler.clearLastKeyPressed();
         }
-        if (inputHandeler.getLastKeyPressed() == Input.Keys.R) {
+        if (inputHandeler.getLastKeyPressed() == Input.Keys.T) {
             if (!graph.getNodes().isEmpty()) {
                 startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
                 endNode = graph.getNodes().get((int) (Math.random() * graph.getNodes().size()));
@@ -206,23 +208,34 @@ public class GameScreen extends ScreenAdapter {
                 playerStats.addJobCompleted(actvJob.getPatience(), actvJob.getActDist());
             }
         }
+
+        float taxiBounceSpeed;
+        float NPCBounceSpeed;
+
+        if (taxi.getSpeed() < 100f) taxiBounceSpeed = 100f;
+        else taxiBounceSpeed = -taxi.getSpeed() * 0.5f;
+
         if (city.collidesWithBuilding(taxi.getHitbox())) {
-            taxi.resolveCollision();
+            taxi.resolveCollision(taxiBounceSpeed);
 
             if (actvJob != null) {
                 actvJob.recordCollision();
             }
         }
+
         for (NPC npc : NPCManager.getNpcs()) {
+            if (npc.getSpeed() < 200f) NPCBounceSpeed = 200f;
+            else NPCBounceSpeed = -taxi.getSpeed() * 0.5f;
+
             if (taxi.getCollisionTimer() <= 0f && npc.getCollisionTimer() <= 0f && taxi.collidesWith(npc)) {
-                taxi.resolveCollision();
-                npc.resolveCollision();
+                taxi.resolveCollision(taxiBounceSpeed);
+                npc.resolveCollision(NPCBounceSpeed);
 
                 if (actvJob != null) actvJob.recordCollision();
             }
 
             if (npc.getCollisionTimer() <= 0f && city.collidesWithBuilding(npc.getHitbox())) {
-                npc.resolveCollision();
+                npc.resolveCollision(NPCBounceSpeed);
             }
         }
         jobManager.update(delta, taxi, city, playerStats);

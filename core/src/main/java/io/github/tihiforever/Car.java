@@ -74,13 +74,16 @@ public class Car {
         previousRotation = rotation;
     }
 
-    public void resolveCollision() {
-        x = previousX;
-        y = previousY;
+    public void resolveCollision(float bounceSpeed) {
+        float dx = x - previousX;
+        float dy = y - previousY;
+
+        x = previousX - dx;
+        y = previousY - dy;
         rotation = previousRotation;
 
         updateHitbox();
-        bounce(-speed * 0.5f);
+        bounce(bounceSpeed);
     }
 
     public float getCollisionTimer() {

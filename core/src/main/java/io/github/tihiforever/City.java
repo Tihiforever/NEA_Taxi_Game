@@ -19,13 +19,16 @@ public class City {
     private int scaleSize;
 
     public City(){
-        mapSize = 10;
+        mapSize = 6;
         cellSize = 192;
         scaleSize = 2;
 
         random = new Random();
         generateCity();
     }
+
+
+
 
     public void generateCity(){
         grid = new Cell[mapSize][mapSize];
