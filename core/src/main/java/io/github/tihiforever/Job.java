@@ -1,6 +1,5 @@
 package io.github.tihiforever;
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -24,7 +23,8 @@ public class Job {
     private float patience;
     private float patienceStart;
     private float timeTaken;
-    private int numCollisions;
+    private int numBuildingCollisions;
+    private int numNPCCollisions;
     private float avrgSpeed;
     private float optimalRouteDeviation;
 
@@ -45,8 +45,10 @@ public class Job {
     private final float patiencePerExpectedSecond = 6f;
 
     private final float patienceLossTime = 0.75f;
-    private final float patienceLossCollisions = 8f;
+    private final int patienceLossBuildingCollisions = 8;
+    private final int patienceLossNPCCollisions = 4;
     private final float baseFare = 10f;
+    
     private final float farePerRoadCell = 2f;
 
     private final float targetSpeed = 300f;
@@ -92,7 +94,8 @@ public class Job {
 
         actDist = 0f;
         timeTaken = 0f;
-        numCollisions = 0;
+        numBuildingCollisions = 0;
+        numNPCCollisions = 0;
         avrgSpeed = 0f;
         optimalRouteDeviation = 0f;
         bonus = 0f;
@@ -125,11 +128,17 @@ public class Job {
         patience = Math.max(0f, patience - patienceLossTime * delta);
     }
 
-    public void recordCollision(){
+    public void recordCollision(Boolean isNPC){
         if (!pickedUp) return;
 
-        numCollisions++;
-        patience = Math.max(0f, patience - patienceLossCollisions);
+        if (!isNPC) {
+            numBuildingCollisions++;
+            patience = Math.max(0f, patience - patienceLossBuildingCollisions);
+        }
+        if (isNPC) {
+            numNPCCollisions++;
+            patience = Math.max(0f, patience - patienceLossNPCCollisions);
+        }
     }
 
     public void completedJob(){
@@ -149,7 +158,7 @@ public class Job {
 
         float speedScore = clamp(avrgSpeed / targetSpeed, 0f, 1f);
 
-        float bonusMultiplier = (patienceScore * patienceBonus) + (timeTaken * timeBonus) + (speedScore * speedBonus) - (numCollisions * collisionPenalty) - (optimalRouteDeviation * routePenalty);
+        float bonusMultiplier = (patienceScore * patienceBonus) + (timeTaken * timeBonus) + (speedScore * speedBonus) - ((numBuildingCollisions + numNPCCollisions) * collisionPenalty) - (optimalRouteDeviation * routePenalty);
 
         bonus = basePay * bonusMultiplier;
         finalPay = Math.max(10f, basePay + bonus);
@@ -184,7 +193,7 @@ public class Job {
     public float getActDist() {return actDist;}
     public float getBasePay() {return basePay;}
     public float getTimeTaken() {return timeTaken;}
-    public int getNumCollisions() {return numCollisions;}
+    public int getNumBuildingCollisions() {return numBuildingCollisions;}
     public float getAvrgSpeed() {return avrgSpeed;}
     public float getOptimalRouteDeviation() {return optimalRouteDeviation;}
     public float getBonus() {return bonus;}

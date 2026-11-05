@@ -210,32 +210,32 @@ public class GameScreen extends ScreenAdapter {
         }
 
         float taxiBounceSpeed;
-        float NPCBounceSpeed;
+        float npcBounceSpeed;
 
-        if (taxi.getSpeed() < 100f) taxiBounceSpeed = 100f;
-        else taxiBounceSpeed = -taxi.getSpeed() * 0.5f;
+        if (taxi.getSpeed() < 0) taxiBounceSpeed = Math.max(100f, -taxi.getSpeed() * 0.5f);
+        else taxiBounceSpeed = -Math.max(100f, taxi.getSpeed() * 0.5f);
 
         if (city.collidesWithBuilding(taxi.getHitbox())) {
             taxi.resolveCollision(taxiBounceSpeed);
 
             if (actvJob != null) {
-                actvJob.recordCollision();
+                actvJob.recordCollision(false);
             }
         }
 
         for (NPC npc : NPCManager.getNpcs()) {
-            if (npc.getSpeed() < 200f) NPCBounceSpeed = 200f;
-            else NPCBounceSpeed = -taxi.getSpeed() * 0.5f;
+            if (npc.getSpeed() < 0) npcBounceSpeed = Math.max(50f, -npc.getSpeed() * 0.2f);
+            else npcBounceSpeed = -Math.max(50f, npc.getSpeed() * 0.2f);
 
             if (taxi.getCollisionTimer() <= 0f && npc.getCollisionTimer() <= 0f && taxi.collidesWith(npc)) {
                 taxi.resolveCollision(taxiBounceSpeed);
-                npc.resolveCollision(NPCBounceSpeed);
+                npc.resolveCollision(npcBounceSpeed);
 
-                if (actvJob != null) actvJob.recordCollision();
+                if (actvJob != null) actvJob.recordCollision(true);
             }
 
             if (npc.getCollisionTimer() <= 0f && city.collidesWithBuilding(npc.getHitbox())) {
-                npc.resolveCollision(NPCBounceSpeed);
+                npc.resolveCollision(npcBounceSpeed);
             }
         }
         jobManager.update(delta, taxi, city, playerStats);
