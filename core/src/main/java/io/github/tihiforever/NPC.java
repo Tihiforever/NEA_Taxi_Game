@@ -46,6 +46,8 @@ public class NPC extends Car {
     public void update(float dt) {
         if (path == null || path.isEmpty()) return;
 
+        savePreviousPosition();
+
         if (collisionTimer > 0) {
             collisionTimer -= dt;
 
@@ -64,8 +66,6 @@ public class NPC extends Car {
         float distance = (float)Math.sqrt(dx * dx + dy * dy);
 
         if (collisionTimer > 0) collisionTimer -= dt;
-
-        savePreviousPosition();
 
         if (distance <= 5) {
             currentWaypoint++;

@@ -83,6 +83,13 @@ public class Car {
         bounce(bounceSpeed);
     }
 
+    public void rollback() {
+        x = previousX;
+        y = previousY;
+        rotation = previousRotation;
+        updateHitbox();
+    }
+
     public float getCollisionTimer() {
         return collisionTimer;
     }

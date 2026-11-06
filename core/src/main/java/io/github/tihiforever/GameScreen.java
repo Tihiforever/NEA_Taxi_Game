@@ -224,20 +224,53 @@ public class GameScreen extends ScreenAdapter {
         }
 
         for (NPC npc : NPCManager.getNpcs()) {
-            if (npc.getSpeed() < 0) npcBounceSpeed = Math.max(50f, -npc.getSpeed() * 0.2f);
-            else npcBounceSpeed = -Math.max(50f, npc.getSpeed() * 0.2f);
+            if (npc.getSpeed() < 0) npcBounceSpeed = Math.max(100f, -npc.getSpeed() * 0.5f);
+            else npcBounceSpeed = -Math.max(100f, npc.getSpeed() * 0.5f);
 
-            if (taxi.getCollisionTimer() <= 0f && npc.getCollisionTimer() <= 0f && taxi.collidesWith(npc)) {
-                taxi.resolveCollision(taxiBounceSpeed);
-                npc.resolveCollision(npcBounceSpeed);
+            if (taxi.collidesWith(npc)) {
+                if (taxi.getCollisionTimer() <= 0f && npc.getCollisionTimer() <= 0f) {
+                    taxi.resolveCollision(taxiBounceSpeed);
+                    npc.resolveCollision(npcBounceSpeed);
 
-                if (actvJob != null) actvJob.recordCollision(true);
+                    if (actvJob != null) actvJob.recordCollision(true);
+                } else {
+                    taxi.rollback();
+                    npc.rollback();
+                }
             }
 
             if (npc.getCollisionTimer() <= 0f && city.collidesWithBuilding(npc.getHitbox())) {
                 npc.resolveCollision(npcBounceSpeed);
             }
+
+            ArrayList<NPC> npcs = NPCManager.getNpcs();
+
+            for (int i = 0; i < npcs.size(); i++) {
+                for (int j = i + 1; j < npcs.size(); j++) {
+                    NPC a = npcs.get(i);
+                    NPC b = npcs.get(j);
+
+                    if (a.collidesWith(b)) {
+                        if (a.getCollisionTimer() <= 0f && b.getCollisionTimer() <= 0f) {
+                            float aBounce, bBounce;
+
+                            if (a.getSpeed() < 0) aBounce = Math.max(100f, -a.getSpeed() * 0.5f);
+                            else aBounce = -Math.max(100f, a.getSpeed() * 0.5f);
+
+                            if (b.getSpeed() < 0) bBounce = Math.max(100f, -b.getSpeed() * 0.5f);
+                            else bBounce = -Math.max(100f, b.getSpeed() * 0.5f);
+
+                            a.resolveCollision(taxiBounceSpeed);
+                            b.resolveCollision(npcBounceSpeed);
+                        } else {
+                            a.rollback();
+                            b.rollback();
+                        }
+                    }
+                }
+            }
         }
+
         jobManager.update(delta, taxi, city, playerStats);
 
         if (visualisationEnabled && !visualisationPaused && !pathfinder.isSearchFinished()) {
