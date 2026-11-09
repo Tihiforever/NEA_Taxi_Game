@@ -36,7 +36,7 @@ public class GameScreen extends ScreenAdapter {
     private boolean visualisationPaused = false;
     private boolean visualisationEnabled = false;
 
-    private boolean degbugMode = true;
+    private boolean degbugMode = false;
     private boolean showPlayerStats = false;
     private boolean showMiniMap = true;
 
@@ -53,7 +53,7 @@ public class GameScreen extends ScreenAdapter {
         jobManager = new JobManager(graph, pathfinder, 5);
         playerStats = new PlayerStats();
         miniMap = new MiniMap(city, taxi);
-        npcManager = new NPCManager(graph, pathfinder, graph.getNodes().size() / 2);
+        npcManager = new NPCManager(graph, pathfinder, 0);
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
         if (!graph.getNodes().isEmpty()) {
@@ -260,8 +260,8 @@ public class GameScreen extends ScreenAdapter {
                             if (b.getSpeed() < 0) bBounce = Math.max(100f, -b.getSpeed() * 0.5f);
                             else bBounce = -Math.max(100f, b.getSpeed() * 0.5f);
 
-                            a.resolveCollision(taxiBounceSpeed);
-                            b.resolveCollision(npcBounceSpeed);
+                            a.resolveCollision(aBounce);
+                            b.resolveCollision(bBounce);
                         } else {
                             a.rollback();
                             b.rollback();
@@ -297,7 +297,7 @@ public class GameScreen extends ScreenAdapter {
 
         city.draw(main.getSr());
 
-        if(degbugMode) graph.draw(main.getSr());
+        if(degbugMode || visualisationEnabled) graph.draw(main.getSr());
 
         Job actvJob = jobManager.getActvJob();
 

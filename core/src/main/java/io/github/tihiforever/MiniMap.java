@@ -12,6 +12,7 @@ public class MiniMap {
 
     private float size;
     private float margin = 20f;
+    private int visibleCells;
 
     public MiniMap(City city, Taxi taxi){
         this.city = city;

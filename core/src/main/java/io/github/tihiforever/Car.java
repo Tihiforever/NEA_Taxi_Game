@@ -51,6 +51,15 @@ public class Car {
 
         sr.rect(0, 0, width, height);
 
+        sr.setColor(Color.WHITE);
+        sr.rect(4f, height - 2f, 13f, 6f);
+        sr.rect(width - 17f, height - 2f, 13f, 6f);
+
+        sr.setColor(Color.RED);
+        sr.rect(4f, -4f, 13f, 6f);
+        sr.rect(width - 17f, -4f, 13f, 6f);
+
+        //width = 46 height = 82
         sr.identity();
     }
 

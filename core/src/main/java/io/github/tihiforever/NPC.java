@@ -60,10 +60,10 @@ public class NPC extends Car {
 
         Node target = path.get(currentWaypoint);
 
-        float dx = target.getX() - x;
-        float dy = target.getY() - y;
+        float tx = target.getX() - x;
+        float ty = target.getY() - y;
 
-        float distance = (float)Math.sqrt(dx * dx + dy * dy);
+        float distance = (float)Math.sqrt(tx * tx + ty * ty);
 
         if (collisionTimer > 0) collisionTimer -= dt;
 
@@ -79,13 +79,29 @@ public class NPC extends Car {
             }
 
             target = path.get(currentWaypoint);
-            dx = target.getX() - x;
-            dy = target.getY() - y;
+            tx = target.getX() - x;
+            ty = target.getY() - y;
         }
 
-        rotation = MathUtils.atan2(dy, dx) * MathUtils.radiansToDegrees;
+        rotation = MathUtils.atan2(ty, tx) * MathUtils.radiansToDegrees;
 
-        if (collisionTimer <= 0f) speed = 300f;
+        if (collisionTimer <= 0f){
+            speed = 300f;
+
+            for (NPC npc : NPCManager.getNpcs()) {
+                if (npc == this) continue;
+
+                float dx = npc.x - x;
+                float dy = npc.y - y;
+
+                float ahead = dx * MathUtils.cosDeg(rotation) + dy * MathUtils.sinDeg(rotation);
+                float side = Math.abs(-dx * MathUtils.sinDeg(rotation) + dy * MathUtils.sinDeg(rotation));
+
+                if (ahead > 0 && ahead < 110 && side < 30) {
+                    speed = Math.max(0, Math.min(speed, (ahead - 35) * 4));
+                }
+            }
+        }
 
         x += MathUtils.cosDeg(rotation) * speed * dt;
         y += MathUtils.sinDeg(rotation) * speed * dt;
@@ -93,5 +109,5 @@ public class NPC extends Car {
         updateHitbox();
     }
 
-    public void draw(ShapeRenderer sr) {super.draw(sr, Color.RED);}
+    public void draw(ShapeRenderer sr) {super.draw(sr, Color.FIREBRICK);}
 }
