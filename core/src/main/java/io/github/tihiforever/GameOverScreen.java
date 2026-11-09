@@ -13,11 +13,13 @@ public class GameOverScreen extends ScreenAdapter {
     private final Main main;
     private final InputHandeler inputHandeler;
     private final int playerScore;
+    private final int numJobs;
 
-    public GameOverScreen(ScreenManager screenManager, Main main, int playerScore) {
+    public GameOverScreen(ScreenManager screenManager, Main main, int playerScore, int numJobs) {
         this.screenManager = screenManager;
         this.main = main;
         this.playerScore = playerScore;
+        this.numJobs = numJobs;
 
         inputHandeler = new InputHandeler();
         Gdx.input.setInputProcessor(inputHandeler);
@@ -45,17 +47,17 @@ public class GameOverScreen extends ScreenAdapter {
 
 
         if(inputHandeler.getLastKeyPressed() == Input.Keys.ENTER){
-            writeToFile(inputHandeler.getPlayerName(), playerScore);
+            writeToFile(inputHandeler.getPlayerName(), playerScore, numJobs);
             screenManager.setScreen(Screen_Type.TITLE);
             inputHandeler.clearLastKeyPressed();
         }
     }
 
-    private void writeToFile(String name, int score){
+    private void writeToFile(String name, int score, int numJobs){
         try {
             FileWriter writer = new FileWriter("leaderboard.txt", true);
 
-            writer.write(name + "," + score + "\n");
+            writer.write(name + "," + score + "," + numJobs + "\n");
 
             writer.close();
 

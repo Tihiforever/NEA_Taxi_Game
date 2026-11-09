@@ -6,10 +6,12 @@ public class PlayerDataPriorityQue {
     private static class PlayerData {
         String name;
         int score;
+        int numJobs;
 
-        PlayerData(String name, int score) {
+        PlayerData(String name, int score, int numJobs) {
             this.name = name;
             this.score = score;
+            this.numJobs = numJobs;
         }
     }
 
@@ -24,8 +26,8 @@ public class PlayerDataPriorityQue {
         return size;
     }
 
-    public void push(String name, int score){
-        PlayerData newPlayerData = new PlayerData(name, score);
+    public void push(String name, int score, int numJobs){
+        PlayerData newPlayerData = new PlayerData(name, score, numJobs);
 
         int position =0;
         while (position < elements.size() && elements.get(position).score >= score){
@@ -48,6 +50,6 @@ public class PlayerDataPriorityQue {
     }
 
     public String getName(int dataEntry){return elements.get(dataEntry).name;}
-
     public int getScore(int dataEntry){return elements.get(dataEntry).score;}
+    public int getNumJobs(int dataEntry){return elements.get(dataEntry).numJobs;}
 }

@@ -51,7 +51,9 @@ public class LeaderboardScreen extends ScreenAdapter {
             main.getFont().draw(main.getBatch(), (i + 1) + ".", screenWidth/8, y);
             main.getFont().draw(main.getBatch(), playerData.getName(i), screenWidth/4, y);
             main.getFont().draw(main.getBatch(), "" + playerData.getScore(i), screenWidth - 300f, y);
+            main.getFont().draw(main.getBatch(), "" + playerData.getNumJobs(i), screenWidth - 300f + String.valueOf(playerData.getScore(i)).length() + 50f, y);
         }
+
         main.getBatch().end();
 
 
@@ -72,7 +74,7 @@ public class LeaderboardScreen extends ScreenAdapter {
 
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-                playerData.push(data[0], Integer.parseInt(data[1]));
+                playerData.push(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2]));
             }
 
             reader.close();
