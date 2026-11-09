@@ -19,7 +19,7 @@ public class City {
     private int scaleSize;
 
     public City(){
-        mapSize = 40;
+        mapSize = 20;
         cellSize = 192;
         scaleSize = 2;
 

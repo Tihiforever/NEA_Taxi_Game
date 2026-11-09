@@ -39,19 +39,24 @@ public class LeaderboardScreen extends ScreenAdapter {
 
         main.getFont().getData().setScale(6f);
         main.getFont().setColor(Color.WHITE);
-        main.getFont().draw(main.getBatch(), "LEADERBOARDS", (screenWidth / 2f) - 350f, screenHeight - 50f);
+        main.getFont().draw(main.getBatch(), "LEADERBOARDS", (screenWidth / 2f) - 350f, screenHeight - 20f);
         main.getFont().getData().setScale(3.5f);
-        main.getFont().draw(main.getBatch(), "TOP 10", (screenWidth / 2f) - 100f, screenHeight - 130f);
+        main.getFont().draw(main.getBatch(), "TOP 10", (screenWidth / 2f) - 100f, screenHeight - 100f);
         main.getFont().getData().setScale(3f);
+
+        main.getFont().getData().setScale(2f);
+        main.getFont().draw(main.getBatch(), "PLAYER", screenWidth / 4f, screenHeight - 160f);
+        main.getFont().draw(main.getBatch(), "SCORE", screenWidth * 0.65f, screenHeight - 160f);
+        main.getFont().draw(main.getBatch(), "JOBS", screenWidth * 0.85f, screenHeight - 160f);
 
         float spacing = 40f;
         for (int i = 0; i < playerData.length() && i < 10; i++) {
-            float y = screenHeight - 180f - (i * spacing);
+            float y = screenHeight - 200f - (i * spacing);
 
-            main.getFont().draw(main.getBatch(), (i + 1) + ".", screenWidth/8, y);
-            main.getFont().draw(main.getBatch(), playerData.getName(i), screenWidth/4, y);
-            main.getFont().draw(main.getBatch(), "" + playerData.getScore(i), screenWidth - 300f, y);
-            main.getFont().draw(main.getBatch(), "" + playerData.getNumJobs(i), screenWidth - 300f + String.valueOf(playerData.getScore(i)).length() + 50f, y);
+            main.getFont().draw(main.getBatch(), (i + 1) + ".", screenWidth / 8f, y);
+            main.getFont().draw(main.getBatch(), playerData.getName(i), screenWidth / 4f, y);
+            main.getFont().draw(main.getBatch(), "£" + playerData.getScore(i), screenWidth * 0.65f, y);
+            main.getFont().draw(main.getBatch(), "" + playerData.getNumJobs(i), screenWidth * 0.85f, y);
         }
 
         main.getBatch().end();

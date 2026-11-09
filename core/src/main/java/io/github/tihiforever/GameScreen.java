@@ -53,7 +53,7 @@ public class GameScreen extends ScreenAdapter {
         jobManager = new JobManager(graph, pathfinder, 5);
         playerStats = new PlayerStats();
         miniMap = new MiniMap(city, taxi);
-        npcManager = new NPCManager(graph, pathfinder, graph.getNodes().size() / 10);
+        npcManager = new NPCManager(graph, pathfinder, 0);
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
         if (!graph.getNodes().isEmpty()) {
