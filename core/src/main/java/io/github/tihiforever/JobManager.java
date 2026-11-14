@@ -7,6 +7,7 @@ import java.util.Random;
 public class JobManager {
     private ArrayList<Job> jobs;
     private Job actvJob;
+    private Job extraJob;
     private Random random = new Random();
 
     private Graph graph;
@@ -68,6 +69,7 @@ public class JobManager {
 
         int availableJobs = jobs.size();
         if (actvJob != null) availableJobs--;
+        if (extraJob != null) availableJobs--;
 
         while (availableJobs < targetAmount) {
             int oldSize = jobs.size();
@@ -80,17 +82,24 @@ public class JobManager {
     }
 
     public boolean acceptJob(Job job) {
-        if (actvJob != null || !jobs.contains(job)) return false;
+        if (!jobs.contains(job)) return false;
 
-        actvJob = job;
-        return true;
+        if (actvJob == null) {
+            actvJob = job;
+            return true;
+        }
+
+        if (upgradeManager.hasUpgrade(Upgrades.PASSENGERS1) && extraJob == null && job != actvJob) {
+            extraJob = job;
+            return true;
+        }
+
+        return false;
     }
 
     public boolean acceptJob(int index) {
-        if (actvJob != null || index < 0 || index >= jobs.size()) return false;
-
-        actvJob = jobs.get(index);
-        return true;
+        if (index < 0 || index >= jobs.size()) return false;
+        return acceptJob(jobs.get(index));
     }
 
     public void update(float dt, Taxi taxi, City city, PlayerStats playerStats) {
@@ -101,7 +110,18 @@ public class JobManager {
                 actvJob.getPickup().setHasJob(false);
                 actvJob.getDropoff().setHasJob(false);
                 jobs.remove(actvJob);
-                actvJob = null;
+                actvJob = extraJob;
+                extraJob = null;
+            }
+        }
+        if (extraJob != null) {
+            extraJob.update(dt, taxi, city);
+
+            if (extraJob.isCompleted()) {
+                extraJob.getPickup().setHasJob(false);
+                extraJob.getDropoff().setHasJob(false);
+                jobs.remove(extraJob);
+                extraJob = null;
             }
         }
 
@@ -110,4 +130,5 @@ public class JobManager {
 
     public ArrayList<Job> getJobs() {return jobs;}
     public Job getActvJob() {return actvJob;}
+    public Job getExtraJob() {return extraJob;}
 }

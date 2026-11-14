@@ -62,6 +62,8 @@ public class GameScreen extends ScreenAdapter {
             endNode = graph.getNodes().get((int) (Math.random() * graph.getNodes().size()));
             pathfinder.startSearch(startNode, endNode);
         }
+        playerStats.addMoney(20001200);
+        upgradeManager.buyUpgrade(Upgrades.PASSENGERS1, playerStats, taxi);
     }
 
     @Override

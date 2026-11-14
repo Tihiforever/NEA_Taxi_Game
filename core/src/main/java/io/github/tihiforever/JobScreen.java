@@ -59,6 +59,7 @@ public class JobScreen extends ScreenAdapter {
         displayJobs.addAll(jobManager.getJobs());
 
         if (jobManager.getActvJob() != null) displayJobs.remove(jobManager.getActvJob());
+        if (jobManager.getExtraJob() != null) displayJobs.remove(jobManager.getExtraJob());
 
         for (Job job : displayJobs) {
             pickupDistances.add(job.getPickupDistance(taxi.getX(), taxi.getY()));

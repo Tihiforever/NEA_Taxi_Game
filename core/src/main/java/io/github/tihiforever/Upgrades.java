@@ -17,7 +17,7 @@ public enum Upgrades {
     FARES2(1500),
     FARES3(3000),
 
-    PASSENGERS1(600),
+    PASSENGERS1(1200),
     PASSENGERS2(1200),
     PASSENGERS3(2500),
 
