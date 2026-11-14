@@ -19,6 +19,7 @@ public class GameScreen extends ScreenAdapter {
     private MiniMap miniMap;
     private PlayerStats playerStats;
     private NPCManager npcManager;
+    private UpgradeManager upgradeManager;
 
     private OrthographicCamera camera;
     private OrthographicCamera hudCamera;
@@ -50,7 +51,8 @@ public class GameScreen extends ScreenAdapter {
         graph = new Graph(city);
         taxi = new Taxi(graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getX(),  graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getY(), inputHandeler);
         pathfinder = new Pathfinder(graph);
-        jobManager = new JobManager(graph, pathfinder, 5);
+        upgradeManager = new UpgradeManager();
+        jobManager = new JobManager(graph, pathfinder, upgradeManager, 5);
         playerStats = new PlayerStats();
         miniMap = new MiniMap(city, taxi);
         npcManager = new NPCManager(graph, pathfinder, 0);

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class Job {
     private Pathfinder pathfinder;
     private Graph graph;
+    private UpgradeManager upgradeManager;
 
     // job info
     private Node pickup;
@@ -48,7 +49,7 @@ public class Job {
     private final int patienceLossBuildingCollisions = 8;
     private final int patienceLossNPCCollisions = 4;
     private final float baseFare = 10f;
-    
+
     private final float farePerRoadCell = 2f;
 
     private final float targetSpeed = 300f;
@@ -56,14 +57,15 @@ public class Job {
     private final float patienceBonus = 0.2f;
     private final float timeBonus = 0.2f;
     private final float speedBonus = 0.1f;
-    private final float collisionPenalty = 0.1f;
+    private float collisionPenalty = 0.1f;
     private final float routePenalty = 0.5f;
 
-    public Job(Node pickup, Node dropoff, Graph graph, Pathfinder pathfinder){
+    public Job(Node pickup, Node dropoff, Graph graph, Pathfinder pathfinder, float fareMultiplier, UpgradeManager upgradeManager){
         this.pickup = pickup;
         this.dropoff = dropoff;
         this.pathfinder = pathfinder;
         this.graph = graph;
+        this.upgradeManager = upgradeManager;
 
         pickup.setHasJob(true);
         dropoff.setHasJob(true);
@@ -83,7 +85,7 @@ public class Job {
 
         roadDist = Math.round(distance);
 
-        basePay = baseFare + roadDist * farePerRoadCell;
+        basePay = (baseFare + roadDist * farePerRoadCell) * fareMultiplier;
 
         optimalDist = roadDist * graph.getCellSize();
 
@@ -105,8 +107,12 @@ public class Job {
     public void update(float delta, Taxi taxi, City city){
         if(completed) return;
 
+        float patienceReduction;
+        if (upgradeManager.hasUpgrade(Upgrades.PASSENGERS2)) patienceReduction = 0.75f;
+        else patienceReduction = 1f;
+
         if (!pickedUp) {
-            patience = Math.max(0f, patience - patienceLossTime * 0.5f * delta);
+            patience = Math.max(0f, patience - patienceLossTime * 0.5f * delta * patienceReduction);
             return;
         }
 
@@ -125,19 +131,22 @@ public class Job {
 
         timeTaken += delta;
 
-        patience = Math.max(0f, patience - patienceLossTime * delta);
+        patience = Math.max(0f, patience - patienceLossTime * delta * patienceReduction);
     }
 
     public void recordCollision(Boolean isNPC){
         if (!pickedUp) return;
 
+        float collisionsReduction;
+        if (upgradeManager.hasUpgrade(Upgrades.BRAKES2)) collisionsReduction = 0.6f;
+        else collisionsReduction = 1f;
+
         if (!isNPC) {
             numBuildingCollisions++;
-            patience = Math.max(0f, patience - patienceLossBuildingCollisions);
-        }
-        if (isNPC) {
+            patience = Math.max(0f, patience - patienceLossBuildingCollisions * collisionsReduction);
+        } if (isNPC) {
             numNPCCollisions++;
-            patience = Math.max(0f, patience - patienceLossNPCCollisions);
+            patience = Math.max(0f, patience - patienceLossNPCCollisions * collisionsReduction);
         }
     }
 
@@ -158,10 +167,19 @@ public class Job {
 
         float speedScore = clamp(avrgSpeed / targetSpeed, 0f, 1f);
 
-        float bonusMultiplier = (patienceScore * patienceBonus) + (timeTaken * timeBonus) + (speedScore * speedBonus) - ((numBuildingCollisions + numNPCCollisions) * collisionPenalty) - (optimalRouteDeviation * routePenalty);
+        float collisonReduction;
+        if (upgradeManager.hasUpgrade(Upgrades.BRAKES2)) collisonReduction = 0.6f;
+        else collisonReduction = 1f;
+
+        float bonusMultiplier = (patienceScore * patienceBonus) + (timeTaken * timeBonus) + (speedScore * speedBonus) - ((numBuildingCollisions + numNPCCollisions) * collisionPenalty * collisonReduction) - (optimalRouteDeviation * routePenalty);
 
         bonus = basePay * bonusMultiplier;
-        finalPay = Math.max(10f, basePay + bonus);
+
+        float fareIncrease;
+        if (upgradeManager.hasUpgrade(Upgrades.PASSENGERS3)) fareIncrease = 1.2f;
+        else fareIncrease = 1f;
+
+        finalPay = Math.max(10f, (basePay + bonus) * fareIncrease);
 
         patience = patienceScore;
     }

@@ -39,7 +39,6 @@ public class Button {
 
         sr.begin(ShapeRenderer.ShapeType.Filled);
         if (isHovered){
-
             sr.setColor(hoverColor);
             sr.rect(x,y,width,height);
         } else {

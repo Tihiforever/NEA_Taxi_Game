@@ -11,13 +11,16 @@ public class JobManager {
 
     private Graph graph;
     private Pathfinder pathfinder;
+    private UpgradeManager upgradeManager;
+
     private int baseAmount;
     private int nextJobNumber = 1;
 
-    public JobManager(Graph graph, Pathfinder pathfinder, int amount) {
+    public JobManager(Graph graph, Pathfinder pathfinder, UpgradeManager upgradeManager, int amount) {
         this.graph = graph;
         this.pathfinder = pathfinder;
         this.baseAmount = amount;
+        this.upgradeManager = upgradeManager;
         jobs = new ArrayList<>();
 
         for (int i = 0; i < amount; i++) {
@@ -39,7 +42,19 @@ public class JobManager {
         Node pickup = availableNodes.remove(random.nextInt(availableNodes.size()));
         Node dropoff = availableNodes.get(random.nextInt(availableNodes.size()));
 
-        Job job = new Job(pickup, dropoff, graph, pathfinder);
+        if (upgradeManager.hasUpgrade(Upgrades.DISPATCH2) && random.nextFloat() < 0.1f) {
+            for (Node node : availableNodes) {
+                if (pathfinder.findPath(pickup, node).size() > pathfinder.findPath(pickup, dropoff).size()) dropoff = node;
+            }
+        }
+
+        float fareMultiplier = 1f;
+
+        if (upgradeManager.hasUpgrade(Upgrades.FARES1)) fareMultiplier += 0.10f;
+        if (upgradeManager.hasUpgrade(Upgrades.FARES2)) fareMultiplier += 0.10f;
+        if (upgradeManager.hasUpgrade(Upgrades.FARES3)) fareMultiplier += 0.15f;
+
+        Job job = new Job(pickup, dropoff, graph, pathfinder, fareMultiplier, upgradeManager);
         job.setJobNum(nextJobNumber);
         nextJobNumber++;
         jobs.add(job);
@@ -48,6 +63,8 @@ public class JobManager {
 
     private void generateJobs(PlayerStats playerStats) {
         int targetAmount = baseAmount + (int)(playerStats.getReputation() * 2);
+
+        if (upgradeManager.hasUpgrade(Upgrades.DISPATCH1)) targetAmount += 5;
 
         int availableJobs = jobs.size();
         if (actvJob != null) availableJobs--;

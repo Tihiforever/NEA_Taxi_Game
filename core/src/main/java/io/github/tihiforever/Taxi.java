@@ -30,7 +30,7 @@ public class Taxi extends Car{
             collisionTimer -= dt;
         }
 
-        float steeringMultiplier = 1f - (Math.abs(speed) / maxSpeed) * 0.6f;
+        float steeringMultiplier = (1f - (Math.abs(speed) / maxSpeed) * 0.6f) * handlingMultiplier;
         previousX = x;
         previousY = y;
         previousRotation = rotation;

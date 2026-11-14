@@ -17,11 +17,12 @@ public class Car {
     protected Polygon hitbox;
 
     // constants
-    protected final float maxSpeed = 1400f;
-    protected final float acceleration = 400f;
-    protected final float friction = 300f;
-    protected final float turnSpeed = 220f;
-    protected final float breakMultiplier = 5f;
+    protected float maxSpeed = 1400f;
+    protected float acceleration = 400f;
+    protected float friction = 300f;
+    protected float turnSpeed = 220f;
+    protected float breakMultiplier = 5f;
+    protected float handlingMultiplier = 1f;
 
     // waiting times and delay
     protected float reverseTimer = 0f;
