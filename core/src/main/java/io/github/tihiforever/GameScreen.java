@@ -69,7 +69,6 @@ public class GameScreen extends ScreenAdapter {
             endNode = graph.getNodes().get((int) (Math.random() * graph.getNodes().size()));
             pathfinder.startSearch(startNode, endNode);
         }
-        playerStats.addMoney(20001200);
     }
 
     @Override
@@ -386,12 +385,14 @@ public class GameScreen extends ScreenAdapter {
 
         if (showMiniMap) miniMap.draw(sr, jobManager.getActvJob(), currentPath, graph, pathfinder, visualisationEnabled, endNode, startNode);
 
-        float eventX = Gdx.graphics.getWidth() - 320;
-        float eventY = Gdx.graphics.getHeight() - 130;
+        float eventWidth = 260;
+        float eventHeight = 120;
+        float eventX = Gdx.graphics.getWidth() - eventWidth - 20;
+        float eventY = Gdx.graphics.getHeight() - eventHeight - 15;
 
         if (!randomEventManager.getEventText().isEmpty()) {
             sr.setColor(0, 0, 0, 0.8f);
-            sr.rect(eventX, eventY, 300, 110);
+            sr.rect(eventX, eventY, eventWidth, eventHeight);
         }
 
         sr.end();
@@ -404,7 +405,7 @@ public class GameScreen extends ScreenAdapter {
         main.getFont().getData().setScale(1);
         main.getFont().draw(main.getBatch(), getInfoText(), 30, Gdx.graphics.getHeight() - 25);
 
-        if (!randomEventManager.getEventText().isEmpty()) main.getFont().draw(main.getBatch(), randomEventManager.getEventText(), eventX + 12, eventY + 90);
+        if (!randomEventManager.getEventText().isEmpty()) main.getFont().draw(main.getBatch(), randomEventManager.getEventText(), eventX + 12, eventY + eventHeight - 15);
 
         main.getBatch().end();
     }
