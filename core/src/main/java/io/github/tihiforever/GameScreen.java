@@ -37,6 +37,10 @@ public class GameScreen extends ScreenAdapter {
     private boolean visualisationPaused = false;
     private boolean visualisationEnabled = false;
 
+    private float gameTime = 8 * 60;
+    private int hour = 8;
+    private int minute = 0;
+
     private boolean degbugMode = false;
     private boolean showPlayerStats = false;
     private boolean showMiniMap = true;
@@ -63,7 +67,6 @@ public class GameScreen extends ScreenAdapter {
             pathfinder.startSearch(startNode, endNode);
         }
         playerStats.addMoney(20001200);
-        upgradeManager.buyUpgrade(Upgrades.PASSENGERS1, playerStats, taxi);
     }
 
     @Override
@@ -104,6 +107,10 @@ public class GameScreen extends ScreenAdapter {
         }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.X) {
             screenManager.setScreen(Screen_Type.SETTINGS);
+            inputHandeler.clearLastKeyPressed();
+        }
+        if (inputHandeler.getLastKeyPressed() == Input.Keys.U) {
+            screenManager.setScreen(Screen_Type.UPGRADE_SCREEN);
             inputHandeler.clearLastKeyPressed();
         }
         if (inputHandeler.getLastKeyPressed() == Input.Keys.R) {
@@ -199,6 +206,13 @@ public class GameScreen extends ScreenAdapter {
 
 
     private void updateEntities(float delta) {
+        gameTime += delta;
+
+        if (gameTime >= 1440) gameTime -= 1440;
+
+        hour = (int) gameTime / 60;
+        minute = (int) gameTime % 60;
+
         taxi.update();
         if (!visualisationEnabled) npcManager.update(delta);
 
@@ -327,7 +341,7 @@ public class GameScreen extends ScreenAdapter {
 
         if (!visualisationEnabled) npcManager.draw(main.getSr());
 
-        taxi.draw(main.getSr(), Color.YELLOW);
+        taxi.draw(main.getSr(), Color.YELLOW, upgradeManager);
         if (degbugMode) taxi.drawHitbox(main.getSr());
 
         main.getSr().setColor(Color.PINK);
@@ -388,6 +402,9 @@ public class GameScreen extends ScreenAdapter {
 
     private String getInfoText() {
         String info = "";
+
+        info += String.format("Time: %02d:%02d", hour, minute);
+        info += "\n";
 
         info += String.format("Speed: %.1f", taxi.getSpeed());
 
@@ -517,4 +534,5 @@ public class GameScreen extends ScreenAdapter {
     public Pathfinder getPathfinder() {return pathfinder;}
     public PlayerStats getPlayerStats() {return playerStats;}
     public Taxi getTaxi() {return taxi;}
+    public UpgradeManager getUpgradeManager() {return upgradeManager;}
 }

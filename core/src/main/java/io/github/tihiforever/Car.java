@@ -45,12 +45,21 @@ public class Car {
     }
 
     public void draw(ShapeRenderer sr, Color colour) {
-        sr.setColor(colour);
-
         sr.getTransformMatrix().translate(x + width / 2f, y + height / 2f, 0).rotate(0, 0, 1, rotation - 90).translate(-width / 2f, -height / 2f, 0);
         sr.updateMatrices();
 
+        sr.setColor(Color.BLACK);
+        sr.rect(-5f, 13f, 10f, 17f);
+        sr.rect(width - 5f, 13f, 10f, 17f);
+        sr.rect(-5f, 56f, 10f, 17f);
+        sr.rect(width - 5f, 56f, 10f, 17f);
+
+        sr.setColor(colour);
         sr.rect(0, 0, width, height);
+
+        sr.setColor(0.1f, 0.2f, 0.3f, 1f);
+        sr.rect(5f, 15f, width - 10f, 13f);
+        sr.rect(5f, height - 28f, width - 10f, 13f);
 
         sr.setColor(Color.WHITE);
         sr.rect(4f, height - 2f, 13f, 6f);
@@ -60,7 +69,6 @@ public class Car {
         sr.rect(4f, -4f, 13f, 6f);
         sr.rect(width - 17f, -4f, 13f, 6f);
 
-        //width = 46 height = 82
         sr.identity();
     }
 

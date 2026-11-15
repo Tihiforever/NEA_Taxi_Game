@@ -58,6 +58,9 @@ public class ScreenManager{
             case LEADERBOARD:
                 currentScreen = new LeaderboardScreen(this, main);
                 break;
+            case UPGRADE_SCREEN:
+                currentScreen = new UpgradeScreen(this, main, gameScreen.getPlayerStats(), gameScreen.getTaxi(), gameScreen.getUpgradeManager());
+                break;
         }
 
         // trigger the new show method on the current screen

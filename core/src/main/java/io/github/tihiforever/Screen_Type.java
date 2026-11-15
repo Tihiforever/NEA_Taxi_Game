@@ -7,5 +7,6 @@ public enum Screen_Type {
     SETTINGS,
     TITLE,
     GAME_OVER,
-    LEADERBOARD
+    LEADERBOARD,
+    UPGRADE_SCREEN
 }
