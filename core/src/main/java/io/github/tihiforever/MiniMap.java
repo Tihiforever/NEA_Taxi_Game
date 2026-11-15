@@ -180,6 +180,22 @@ public class MiniMap {
             }
         }
 
+        for (Node node : graph.getNodes()) {
+            if (!node.isBlocked()) continue;
+
+            int row = node.getRow();
+            int col = node.getCol();
+
+            int visibleRange;
+            if (visulisationEnabled) visibleRange = cells.length;
+            else visibleRange = 30;
+
+            if (row < startRow || row >= startRow + visibleRange || col < startCol || col >= startCol + visibleRange) continue;
+
+            sr.setColor(Color.LIGHT_GRAY);
+            sr.rect(startX + (col - startCol) * cellSize, startY + (row - startRow) * cellSize, cellSize, cellSize);
+        }
+
         if (!visulisationEnabled) {
             sr.setColor(Color.YELLOW);
             sr.rect(startX + 15 * cellSize, startY + 15 * cellSize, cellSize, cellSize);

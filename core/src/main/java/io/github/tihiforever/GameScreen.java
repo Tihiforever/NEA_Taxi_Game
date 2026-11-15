@@ -16,6 +16,7 @@ public class GameScreen extends ScreenAdapter {
     private Graph graph;
     private Pathfinder pathfinder;
     private JobManager jobManager;
+    private RandomEventManager randomEventManager;
     private MiniMap miniMap;
     private PlayerStats playerStats;
     private NPCManager npcManager;
@@ -40,6 +41,7 @@ public class GameScreen extends ScreenAdapter {
     private float gameTime = 8 * 60;
     private int hour = 8;
     private int minute = 0;
+    private boolean rushhour = false;
 
     private boolean degbugMode = false;
     private boolean showPlayerStats = false;
@@ -57,6 +59,7 @@ public class GameScreen extends ScreenAdapter {
         pathfinder = new Pathfinder(graph);
         upgradeManager = new UpgradeManager();
         jobManager = new JobManager(graph, pathfinder, upgradeManager, 5);
+        randomEventManager = new RandomEventManager(graph);
         playerStats = new PlayerStats();
         miniMap = new MiniMap(city, taxi);
         npcManager = new NPCManager(graph, pathfinder, 0);
@@ -213,6 +216,9 @@ public class GameScreen extends ScreenAdapter {
         hour = (int) gameTime / 60;
         minute = (int) gameTime % 60;
 
+        rushhour = (hour >= 7 && hour < 9) || (hour >= 16 && hour < 19);
+        jobManager.setRushHour(rushhour);
+
         taxi.update();
         if (!visualisationEnabled) npcManager.update(delta);
 
@@ -290,6 +296,7 @@ public class GameScreen extends ScreenAdapter {
         }
 
         jobManager.update(delta, taxi, city, playerStats);
+        randomEventManager.update(delta, graph.getClosestNode(taxi.getX(), taxi.getY()));
 
         if (visualisationEnabled && !visualisationPaused && !pathfinder.isSearchFinished()) {
             searchTimer += delta;
@@ -316,6 +323,7 @@ public class GameScreen extends ScreenAdapter {
         city.draw(main.getSr());
 
         if(degbugMode || visualisationEnabled) graph.draw(main.getSr());
+        randomEventManager.draw(main.getSr());
 
         Job actvJob = jobManager.getActvJob();
 
@@ -367,16 +375,24 @@ public class GameScreen extends ScreenAdapter {
         sr.begin(ShapeRenderer.ShapeType.Filled);
         sr.setColor(0, 0, 0, 0.7f);
         if (jobManager.getActvJob() != null && showPlayerStats) {
-            sr.rect(15, Gdx.graphics.getHeight() - 210, 270, 195);
+            sr.rect(15, Gdx.graphics.getHeight() - 220, 270, 205);
         } else if (jobManager.getActvJob() == null && showPlayerStats) {
-            sr.rect(15, Gdx.graphics.getHeight() - 200, 270, 185);
+            sr.rect(15, Gdx.graphics.getHeight() - 210, 270, 195);
         } else if (jobManager.getActvJob() != null){
-            sr.rect(15, Gdx.graphics.getHeight() - 105, 270, 90);
+            sr.rect(15, Gdx.graphics.getHeight() - 115, 270, 100);
         } else {
-            sr.rect(15, Gdx.graphics.getHeight() - 85, 270, 70);
+            sr.rect(15, Gdx.graphics.getHeight() - 95, 270, 80);
         }
 
         if (showMiniMap) miniMap.draw(sr, jobManager.getActvJob(), currentPath, graph, pathfinder, visualisationEnabled, endNode, startNode);
+
+        float eventX = Gdx.graphics.getWidth() - 320;
+        float eventY = Gdx.graphics.getHeight() - 130;
+
+        if (!randomEventManager.getEventText().isEmpty()) {
+            sr.setColor(0, 0, 0, 0.8f);
+            sr.rect(eventX, eventY, 300, 110);
+        }
 
         sr.end();
 
@@ -387,6 +403,8 @@ public class GameScreen extends ScreenAdapter {
 
         main.getFont().getData().setScale(1);
         main.getFont().draw(main.getBatch(), getInfoText(), 30, Gdx.graphics.getHeight() - 25);
+
+        if (!randomEventManager.getEventText().isEmpty()) main.getFont().draw(main.getBatch(), randomEventManager.getEventText(), eventX + 12, eventY + 90);
 
         main.getBatch().end();
     }
@@ -404,6 +422,7 @@ public class GameScreen extends ScreenAdapter {
         String info = "";
 
         info += String.format("Time: %02d:%02d", hour, minute);
+        if (rushhour) info += "  (RUSH HOUR!)";
         info += "\n";
 
         info += String.format("Speed: %.1f", taxi.getSpeed());
@@ -414,18 +433,14 @@ public class GameScreen extends ScreenAdapter {
 
         Job job = jobManager.getActvJob();
 
-        if (job == null) {
-            info += "\nAvailable Jobs: " + jobManager.getJobs().size();
-        }
+        if (job == null) info += "\nAvailable Jobs: " + jobManager.getJobs().size();
         info += "\nObjective: ";
 
-        if (job != null ){
+        if (job != null ) {
 
-            if (job.isPickedUp()) {
-                info += "Deliver Customer";
-            } else {
-                info += "Collect Passenger";
-            }
+            if (job.isPickedUp()) info += "Deliver Customer";
+            else info += "Collect Passenger";
+
 
             info += "\nFare: £" + String.format("%.2f", job.getBasePay());
             info += "\nPatience: " + String.format("%.0f", job.getPatience());

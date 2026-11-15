@@ -21,6 +21,7 @@ public class Node {
 
     public boolean open;
     public boolean closed;
+    private boolean blocked = false;
 
     public Node(int row, int col, float x, float y) {
         this.row = row;
@@ -70,4 +71,7 @@ public class Node {
 
     public boolean isHasJob() {return hasJob;}
     public void setHasJob(boolean hasJob) {this.hasJob = hasJob;}
+
+    public boolean isBlocked() {return blocked;}
+    public void setBlocked(boolean blocked) {this.blocked = blocked;}
 }

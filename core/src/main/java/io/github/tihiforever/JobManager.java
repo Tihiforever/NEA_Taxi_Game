@@ -16,6 +16,7 @@ public class JobManager {
 
     private int baseAmount;
     private int nextJobNumber = 1;
+    private boolean rushHour = false;
 
     public JobManager(Graph graph, Pathfinder pathfinder, UpgradeManager upgradeManager, int amount) {
         this.graph = graph;
@@ -33,7 +34,7 @@ public class JobManager {
         ArrayList<Node> availableNodes = new ArrayList<>();
 
         for (Node node : graph.getNodes()) {
-            if (!node.isHasJob()) {
+            if (!node.isHasJob() && !node.isBlocked()) {
                 availableNodes.add(node);
             }
         }
@@ -64,6 +65,7 @@ public class JobManager {
 
     private void generateJobs(PlayerStats playerStats) {
         int targetAmount = baseAmount + (int)(playerStats.getReputation() * 2);
+        if (rushHour) targetAmount += 4;
 
         if (upgradeManager.hasUpgrade(Upgrades.DISPATCH1)) targetAmount += 5;
 
@@ -131,4 +133,5 @@ public class JobManager {
     public ArrayList<Job> getJobs() {return jobs;}
     public Job getActvJob() {return actvJob;}
     public Job getExtraJob() {return extraJob;}
+    public void setRushHour(boolean rushHour) {this.rushHour = rushHour;}
 }

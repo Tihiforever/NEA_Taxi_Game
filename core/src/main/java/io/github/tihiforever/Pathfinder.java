@@ -26,7 +26,7 @@ public class Pathfinder {
     public ArrayList<Node> findPath(Node start, Node end) {
         ArrayList<Node> path = new ArrayList<Node>();
 
-        if (start == null || end == null) return path;
+        if (start == null || end == null || end.isBlocked()) return path;
 
         if (start == end) {
             path.add(start);

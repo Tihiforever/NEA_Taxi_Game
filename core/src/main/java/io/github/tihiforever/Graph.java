@@ -113,11 +113,11 @@ public class Graph {
     }
 
     public ArrayList<Node> getNeighbours(Node node) {
-        ArrayList<Node> neighbours = new ArrayList<Node>();
+        ArrayList<Node> neighbours = new ArrayList<>();
 
         for (Edge edge : edges) {
-            if (edge.getStart() == node) neighbours.add(edge.getEnd());
-            if (edge.getEnd() == node) neighbours.add(edge.getStart());
+            if (edge.getStart() == node && !edge.getEnd().isBlocked()) neighbours.add(edge.getEnd());
+            if (edge.getEnd() == node && !edge.getStart().isBlocked()) neighbours.add(edge.getStart());
         }
 
         return neighbours;
