@@ -385,9 +385,9 @@ public class GameScreen extends ScreenAdapter {
 
         if (showMiniMap) miniMap.draw(sr, jobManager.getActvJob(), currentPath, graph, pathfinder, visualisationEnabled, endNode, startNode);
 
-        float eventWidth = 260;
-        float eventHeight = 120;
-        float eventX = Gdx.graphics.getWidth() - eventWidth - 20;
+        float eventWidth = 270;
+        float eventHeight = 100;
+        float eventX = Gdx.graphics.getWidth() - eventWidth - 15;
         float eventY = Gdx.graphics.getHeight() - eventHeight - 15;
 
         if (!randomEventManager.getEventText().isEmpty()) {
@@ -405,7 +405,7 @@ public class GameScreen extends ScreenAdapter {
         main.getFont().getData().setScale(1);
         main.getFont().draw(main.getBatch(), getInfoText(), 30, Gdx.graphics.getHeight() - 25);
 
-        if (!randomEventManager.getEventText().isEmpty()) main.getFont().draw(main.getBatch(), randomEventManager.getEventText(), eventX + 12, eventY + eventHeight - 15);
+        if (!randomEventManager.getEventText().isEmpty()) main.getFont().draw(main.getBatch(), randomEventManager.getEventText(), eventX + 15f, Gdx.graphics.getHeight() - 25f);
 
         main.getBatch().end();
     }

@@ -111,7 +111,7 @@ public class MiniMap {
                 else if (child.isOpen()) sr.setColor(Color.SKY);
                 else continue;
 
-                sr.rectLine(startX + (colA - startCol) * cellSize, startY + (rowA - startRow) * cellSize, startX + (colB - startCol) * cellSize, startY + (rowB - startRow) * cellSize, cellSize * 0.5f);
+                sr.rectLine(startX + (a.getX() / city.getCellSize() - startCol) * cellSize, startY + (a.getY() / city.getCellSize() - startRow) * cellSize, startX + (b.getX() / city.getCellSize() - startCol) * cellSize, startY + (b.getY() / city.getCellSize() - startRow) * cellSize, cellSize * 0.5f);
             }
 
             for (Node node : graph.getNodes()) {

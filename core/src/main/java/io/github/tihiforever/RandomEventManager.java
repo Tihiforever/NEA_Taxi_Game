@@ -39,6 +39,9 @@ public class RandomEventManager {
             }
         }
 
+        if (events.isEmpty()) currentEvent = 0;
+        else if (currentEvent >= events.size()) currentEvent = 0;
+
         eventTimer -= delta;
 
         if (eventTimer <= 0) {
