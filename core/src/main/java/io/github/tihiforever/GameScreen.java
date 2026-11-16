@@ -43,7 +43,7 @@ public class GameScreen extends ScreenAdapter {
     private int minute = 0;
     private boolean rushhour = false;
 
-    private boolean degbugMode = false;
+    private boolean degbugMode = true;
     private boolean showPlayerStats = false;
     private boolean showMiniMap = true;
 

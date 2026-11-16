@@ -44,7 +44,7 @@ public class JobManager {
         Node pickup = availableNodes.remove(random.nextInt(availableNodes.size()));
         Node dropoff = availableNodes.get(random.nextInt(availableNodes.size()));
 
-        if (upgradeManager.hasUpgrade(Upgrades.DISPATCH2) && random.nextFloat() < 0.1f) {
+        if (upgradeManager.hasUpgrade(Upgrades.DISPATCH2) && random.nextFloat() < 0.3f) {
             for (Node node : availableNodes) {
                 if (pathfinder.findPath(pickup, node).size() > pathfinder.findPath(pickup, dropoff).size()) dropoff = node;
             }

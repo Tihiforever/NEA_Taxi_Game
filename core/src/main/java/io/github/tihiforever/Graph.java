@@ -46,7 +46,7 @@ public class Graph {
                 if (west) connections++;
 
                 if(connections == 2 && (vertical || horizontal)) continue;
-                if (connections == 1) System.out.println("deadend at" + row + " " + col);
+                if (connections == 1) continue;
 
                 float x = col * city.getCellSize() + city.getCellSize() / 2f;
                 float y = row * city.getCellSize() + city.getCellSize() / 2f;
