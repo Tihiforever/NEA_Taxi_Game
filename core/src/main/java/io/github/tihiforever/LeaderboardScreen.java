@@ -46,8 +46,9 @@ public class LeaderboardScreen extends ScreenAdapter {
 
         main.getFont().getData().setScale(2f);
         main.getFont().draw(main.getBatch(), "PLAYER", screenWidth / 4f, screenHeight - 160f);
-        main.getFont().draw(main.getBatch(), "SCORE", screenWidth * 0.65f, screenHeight - 160f);
-        main.getFont().draw(main.getBatch(), "JOBS", screenWidth * 0.85f, screenHeight - 160f);
+        main.getFont().draw(main.getBatch(), "SCORE", screenWidth * 0.45f, screenHeight - 160f);
+        main.getFont().draw(main.getBatch(), "JOBS", screenWidth * 0.65f, screenHeight - 160f);
+        main.getFont().draw(main.getBatch(), "ACHIVEMENTS", screenWidth * 0.85f, screenHeight - 160f);
 
         float spacing = 40f;
         for (int i = 0; i < playerData.length() && i < 10; i++) {
@@ -55,8 +56,9 @@ public class LeaderboardScreen extends ScreenAdapter {
 
             main.getFont().draw(main.getBatch(), (i + 1) + ".", screenWidth / 8f, y);
             main.getFont().draw(main.getBatch(), playerData.getName(i), screenWidth / 4f, y);
-            main.getFont().draw(main.getBatch(), "£" + playerData.getScore(i), screenWidth * 0.65f, y);
-            main.getFont().draw(main.getBatch(), "" + playerData.getNumJobs(i), screenWidth * 0.85f, y);
+            main.getFont().draw(main.getBatch(), "£" + playerData.getScore(i), screenWidth * 0.45f, y);
+            main.getFont().draw(main.getBatch(), "" + playerData.getNumJobs(i), screenWidth * 0.65f, y);
+            main.getFont().draw(main.getBatch(), "" + playerData.getNumAchivements(i), screenWidth * 0.85f, y);
         }
 
         main.getBatch().end();
@@ -79,7 +81,7 @@ public class LeaderboardScreen extends ScreenAdapter {
 
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-                playerData.push(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2]));
+                playerData.push(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]));
             }
 
             reader.close();

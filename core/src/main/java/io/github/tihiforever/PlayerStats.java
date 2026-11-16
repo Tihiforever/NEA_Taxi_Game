@@ -2,12 +2,15 @@ package io.github.tihiforever;
 
 public class PlayerStats {
     private float money;
+    private float totalMoney;
     private float totalReputation;
     private int totalJobsCompleted;
     private float totalDistanceDriven;
+    private int numAchivements = 0;
 
     public void addMoney(float amount) {
         money += amount;
+        if (amount > 0) totalMoney += amount;
     }
 
     public void addJobCompleted(float patienceScore, float distance) {
@@ -23,4 +26,6 @@ public class PlayerStats {
     }
     public int getTotalJobsCompleted() {return totalJobsCompleted;}
     public float getTotalDistanceDriven() {return totalDistanceDriven;}
+    public float getTotalMoney() {return totalMoney;}
+    public int getNumAchivements() {return numAchivements;}
 }

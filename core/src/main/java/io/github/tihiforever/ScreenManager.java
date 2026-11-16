@@ -46,13 +46,15 @@ public class ScreenManager{
             case GAME_OVER:
                 int score = 0;
                 int numJobs = 0;
+                int numAchivements = 0;
 
                 if (gameScreen != null) {
-                    score = Math.round(gameScreen.getPlayerStats().getMoney());
+                    score = Math.round(gameScreen.getPlayerStats().getTotalMoney());
                     numJobs = Math.round(gameScreen.getPlayerStats().getTotalJobsCompleted());
+                    numAchivements = Math.round(gameScreen.getPlayerStats().getNumAchivements());
                 }
 
-                currentScreen = new GameOverScreen(this, main, score, numJobs);
+                currentScreen = new GameOverScreen(this, main, score, numJobs, numAchivements);
                 gameScreen = null;
                 break;
             case LEADERBOARD:
