@@ -45,20 +45,19 @@ public class LeaderboardScreen extends ScreenAdapter {
         main.getFont().getData().setScale(3f);
 
         main.getFont().getData().setScale(2f);
-        main.getFont().draw(main.getBatch(), "PLAYER", screenWidth / 4f, screenHeight - 160f);
-        main.getFont().draw(main.getBatch(), "SCORE", screenWidth * 0.45f, screenHeight - 160f);
-        main.getFont().draw(main.getBatch(), "JOBS", screenWidth * 0.65f, screenHeight - 160f);
-        main.getFont().draw(main.getBatch(), "ACHIVEMENTS", screenWidth * 0.85f, screenHeight - 160f);
+        main.getFont().draw(main.getBatch(), "PLAYER", 100f, screenHeight - 160f);
+        main.getFont().draw(main.getBatch(), "SCORE", screenWidth * 0.35f, screenHeight - 160f);
+        main.getFont().draw(main.getBatch(), "JOBS", screenWidth * 0.55f, screenHeight - 160f);
+        main.getFont().draw(main.getBatch(), "ACHIVEMENTS", screenWidth * 0.7f, screenHeight - 160f);
 
         float spacing = 40f;
         for (int i = 0; i < playerData.length() && i < 10; i++) {
             float y = screenHeight - 200f - (i * spacing);
-
-            main.getFont().draw(main.getBatch(), (i + 1) + ".", screenWidth / 8f, y);
-            main.getFont().draw(main.getBatch(), playerData.getName(i), screenWidth / 4f, y);
-            main.getFont().draw(main.getBatch(), "£" + playerData.getScore(i), screenWidth * 0.45f, y);
-            main.getFont().draw(main.getBatch(), "" + playerData.getNumJobs(i), screenWidth * 0.65f, y);
-            main.getFont().draw(main.getBatch(), "" + playerData.getNumAchivements(i), screenWidth * 0.85f, y);
+            main.getFont().draw(main.getBatch(), (i + 1) + ".", 50f, y);
+            main.getFont().draw(main.getBatch(), playerData.getName(i), 100f, y);
+            main.getFont().draw(main.getBatch(), "£" + playerData.getScore(i), screenWidth * 0.35f, y);
+            main.getFont().draw(main.getBatch(), "" + playerData.getNumJobs(i), screenWidth * 0.55f, y);
+            main.getFont().draw(main.getBatch(), "" + playerData.getNumAchivements(i), screenWidth * 0.7f, y);
         }
 
         main.getBatch().end();

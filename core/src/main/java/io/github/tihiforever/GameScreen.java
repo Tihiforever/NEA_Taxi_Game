@@ -228,7 +228,7 @@ public class GameScreen extends ScreenAdapter {
 
             if(actvJob.isCompleted()){
                 playerStats.addMoney(actvJob.getFinalPay());
-                playerStats.addJobCompleted(actvJob.getPatience(), actvJob.getActDist());
+                playerStats.addJobCompleted(actvJob.getPatience(), actvJob.getActDist(), actvJob.getNumBuildingCollisions(), gameTime);
             }
         }
 
