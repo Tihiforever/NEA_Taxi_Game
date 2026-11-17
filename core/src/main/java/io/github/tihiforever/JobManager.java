@@ -55,6 +55,7 @@ public class JobManager {
         if (upgradeManager.hasUpgrade(Upgrades.FARES1)) fareMultiplier += 0.10f;
         if (upgradeManager.hasUpgrade(Upgrades.FARES2)) fareMultiplier += 0.10f;
         if (upgradeManager.hasUpgrade(Upgrades.FARES3)) fareMultiplier += 0.15f;
+        if (rushHour) fareMultiplier += 0.15f;
 
         Job job = new Job(pickup, dropoff, graph, pathfinder, fareMultiplier, upgradeManager);
         job.setJobNum(nextJobNumber);
