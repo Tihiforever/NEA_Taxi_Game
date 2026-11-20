@@ -383,6 +383,11 @@ public class GameScreen extends ScreenAdapter {
             sr.rect(15, Gdx.graphics.getHeight() - 95, 270, 80);
         }
 
+        boolean[] achievements = playerStats.getAchievements();
+        for (int i = 0; i < achievements.length; i++) {
+            if (achievements[i]) sr.rect(Gdx.graphics.getWidth() / 6f, Gdx.graphics.getHeight() / 6f, Gdx.graphics.getWidth() / 3f, Gdx.graphics.getHeight() / 3f);
+        }
+
         if (showMiniMap) miniMap.draw(sr, jobManager.getActvJob(), currentPath, graph, pathfinder, visualisationEnabled, endNode, startNode);
 
         float eventWidth = 270;
@@ -402,10 +407,30 @@ public class GameScreen extends ScreenAdapter {
         main.getBatch().setProjectionMatrix(hudCamera.combined);
         main.getBatch().begin();
 
-        main.getFont().getData().setScale(1);
+        main.getFont().getData().setScale(1f);
         main.getFont().draw(main.getBatch(), getInfoText(), 30, Gdx.graphics.getHeight() - 25);
 
         if (!randomEventManager.getEventText().isEmpty()) main.getFont().draw(main.getBatch(), randomEventManager.getEventText(), eventX + 15f, Gdx.graphics.getHeight() - 25f);
+
+        main.getFont().getData().setScale(4f);
+
+        String achievementText = "";
+        for (int i = 0; i < achievements.length; i++) {
+            if (achievements[i]) {
+                if (i == 0) achievementText = "First Steps - £50\n(Complete 1 job)";
+                else if (i == 1) achievementText = "Endless Driver - £10,000\n(Drive 1,000,000 units)";
+                else if (i == 2) achievementText = "Getting Somewhere - £200\n(Earn £200)";
+                else if (i == 3) achievementText = "Taxi Veteran - £1,000\n(Complete 100 jobs)";
+                else if (i == 4) achievementText = "Upgrade Monster - £5,000\n(Purchase all upgrades)";
+                else if (i == 5) achievementText = "Night Owl - £200\n(Complete 10 jobs between 20:00–06:00)";
+                else if (i == 6) achievementText = "Taxi Tycoon - £1000\n(Earn £10,000)";
+                else if (i == 7) achievementText = "Perfectionist - 500£\n(Reach at least 4.5 reputation)";
+                else if (i == 8) achievementText = "Busy Bee - £100\n(Complete 25 jobs)";
+                else if (i == 9) achievementText = "Clean Getaway - £800\n(Complete 10 collision-free jobs)";
+            }
+        }
+
+        main.getFont().draw(main.getBatch(), achievementText, Gdx.graphics.getWidth() / 6f + 50f, Gdx.graphics.getHeight() / 6f + 20f);
 
         main.getBatch().end();
     }

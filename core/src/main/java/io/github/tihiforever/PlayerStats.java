@@ -82,6 +82,8 @@ public class PlayerStats {
         return (totalReputation / totalJobsCompleted) * 5;
     }
 
+    public boolean[] getAchievements() {return achievements;}
+
     public int getTotalJobsCompleted() {return totalJobsCompleted;}
     public float getTotalDistanceDriven() {return totalDistanceDriven;}
     public float getTotalMoney() {return totalMoney;}
