@@ -43,6 +43,10 @@ public class GameScreen extends ScreenAdapter {
     private int minute = 0;
     private boolean rushhour = false;
 
+    private boolean[] previousAchievements = new boolean[10];
+    private int achievementNotification = -1;
+    private float achievementTimer = 0f;
+
     private boolean degbugMode = false;
     private boolean showPlayerStats = false;
     private boolean showMiniMap = true;
@@ -305,6 +309,23 @@ public class GameScreen extends ScreenAdapter {
                 pathfinder.stepSearch();
             }
         }
+
+        achievementTimer -= delta;
+
+        boolean[] achievements = playerStats.getAchievements();
+
+        if (achievementTimer <= 0) {
+            achievementNotification = -1;
+
+            for (int i = 0; i < achievements.length; i++) {
+                if (achievements[i] && !previousAchievements[i]) {
+                    achievementNotification = i;
+                    achievementTimer = 4f;
+                    previousAchievements[i] = true;
+                    break;
+                }
+            }
+        }
     }
 
     private void updateCamera() {
@@ -383,11 +404,6 @@ public class GameScreen extends ScreenAdapter {
             sr.rect(15, Gdx.graphics.getHeight() - 95, 270, 80);
         }
 
-        boolean[] achievements = playerStats.getAchievements();
-        for (int i = 0; i < achievements.length; i++) {
-            if (achievements[i]) sr.rect(Gdx.graphics.getWidth() / 6f, Gdx.graphics.getHeight() / 6f, Gdx.graphics.getWidth() / 3f, Gdx.graphics.getHeight() / 3f);
-        }
-
         if (showMiniMap) miniMap.draw(sr, jobManager.getActvJob(), currentPath, graph, pathfinder, visualisationEnabled, endNode, startNode);
 
         float eventWidth = 270;
@@ -398,6 +414,14 @@ public class GameScreen extends ScreenAdapter {
         if (!randomEventManager.getEventText().isEmpty()) {
             sr.setColor(0, 0, 0, 0.8f);
             sr.rect(eventX, eventY, eventWidth, eventHeight);
+        }
+
+        if (achievementNotification != -1 && achievementTimer > 0) {
+            float boxWidth = 500f;
+            float boxHeight = 180f;
+
+            sr.setColor(0, 0, 0, 0.9f);
+            sr.rect((Gdx.graphics.getWidth() - boxWidth) / 2f, (Gdx.graphics.getHeight() - boxHeight) / 2f, boxWidth, boxHeight);
         }
 
         sr.end();
@@ -412,25 +436,26 @@ public class GameScreen extends ScreenAdapter {
 
         if (!randomEventManager.getEventText().isEmpty()) main.getFont().draw(main.getBatch(), randomEventManager.getEventText(), eventX + 15f, Gdx.graphics.getHeight() - 25f);
 
-        main.getFont().getData().setScale(4f);
+        if (achievementNotification != -1 && achievementTimer > 0) {
+            String achievementText = "";
 
-        String achievementText = "";
-        for (int i = 0; i < achievements.length; i++) {
-            if (achievements[i]) {
-                if (i == 0) achievementText = "First Steps - £50\n(Complete 1 job)";
-                else if (i == 1) achievementText = "Endless Driver - £10,000\n(Drive 1,000,000 units)";
-                else if (i == 2) achievementText = "Getting Somewhere - £200\n(Earn £200)";
-                else if (i == 3) achievementText = "Taxi Veteran - £1,000\n(Complete 100 jobs)";
-                else if (i == 4) achievementText = "Upgrade Monster - £5,000\n(Purchase all upgrades)";
-                else if (i == 5) achievementText = "Night Owl - £200\n(Complete 10 jobs between 20:00–06:00)";
-                else if (i == 6) achievementText = "Taxi Tycoon - £1000\n(Earn £10,000)";
-                else if (i == 7) achievementText = "Perfectionist - 500£\n(Reach at least 4.5 reputation)";
-                else if (i == 8) achievementText = "Busy Bee - £100\n(Complete 25 jobs)";
-                else if (i == 9) achievementText = "Clean Getaway - £800\n(Complete 10 collision-free jobs)";
-            }
+            if (achievementNotification == 0) achievementText = "First Steps - £50\n(Complete 1 job)";
+            else if (achievementNotification == 1) achievementText = "Endless Driver - £10,000\n(Drive 1,000,000 units)";
+            else if (achievementNotification == 2) achievementText = "Getting Somewhere - £200\n(Earn £200)";
+            else if (achievementNotification == 3) achievementText = "Taxi Veteran - £1,000\n(Complete 100 jobs)";
+            else if (achievementNotification == 4) achievementText = "Upgrade Monster - £5,000\n(Purchase all upgrades)";
+            else if (achievementNotification == 5) achievementText = "Night Owl - £200\n(Complete 10 jobs between 20:00–06:00)";
+            else if (achievementNotification == 6) achievementText = "Taxi Tycoon - £1000\n(Earn £10,000)";
+            else if (achievementNotification == 7) achievementText = "Perfectionist - 500£\n(Reach at least 4.5 reputation)";
+            else if (achievementNotification == 8) achievementText = "Busy Bee - £100\n(Complete 25 jobs)";
+            else if (achievementNotification == 9) achievementText = "Clean Getaway - £800\n(Complete 10 collision-free jobs)";
+
+            main.getFont().getData().setScale(2f);
+            main.getFont().draw(main.getBatch(), "ACHIEVEMENT UNLOCKED", Gdx.graphics.getWidth() / 2f - 200f, Gdx.graphics.getHeight() / 2f + 45f);
+
+            main.getFont().getData().setScale(1.3f);
+            main.getFont().draw(main.getBatch(), achievementText, Gdx.graphics.getWidth() / 2f - 200f, Gdx.graphics.getHeight() / 2f + 5f);
         }
-
-        main.getFont().draw(main.getBatch(), achievementText, Gdx.graphics.getWidth() / 6f + 50f, Gdx.graphics.getHeight() / 6f + 20f);
 
         main.getBatch().end();
     }
