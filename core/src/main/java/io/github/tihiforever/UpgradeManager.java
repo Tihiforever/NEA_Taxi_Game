@@ -46,4 +46,14 @@ public class UpgradeManager {
     public boolean hasUpgrade(Upgrades upgrade) {
         return bought[upgrade.ordinal()];
     }
+    public boolean hasAllUpgrades() {
+        int count = 0;
+        for (int i = 0; i < bought.length; i++) {
+            if (bought[i]) {
+                count++;
+            }
+        }
+        if (count == bought.length) return true;
+        else return false;
+    }
 }

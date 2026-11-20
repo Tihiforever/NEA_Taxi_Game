@@ -8,6 +8,7 @@ public class Job {
     private Pathfinder pathfinder;
     private Graph graph;
     private UpgradeManager upgradeManager;
+    private PlayerStats playerStats;
 
     // job info
     private Node pickup;
@@ -60,12 +61,13 @@ public class Job {
     private float collisionPenalty = 0.1f;
     private final float routePenalty = 0.5f;
 
-    public Job(Node pickup, Node dropoff, Graph graph, Pathfinder pathfinder, float fareMultiplier, UpgradeManager upgradeManager){
+    public Job(Node pickup, Node dropoff, Graph graph, Pathfinder pathfinder, float fareMultiplier, UpgradeManager upgradeManager, PlayerStats playerStats){
         this.pickup = pickup;
         this.dropoff = dropoff;
         this.pathfinder = pathfinder;
         this.graph = graph;
         this.upgradeManager = upgradeManager;
+        this.playerStats = playerStats;
 
         pickup.setHasJob(true);
         dropoff.setHasJob(true);
@@ -150,8 +152,17 @@ public class Job {
         }
     }
 
-    public void completedJob(){
+    public void completedJob(float time){
         if (completed) return;
+
+        int hour = (int) time / 60;
+        if (hour <= 6 || hour >= 20){
+            playerStats.setNightJobsCompleted(playerStats.getNightJobsCompleted() + 1);
+        }
+
+        if (numBuildingCollisions + numNPCCollisions == 0){
+            playerStats.setCleanJobsCompleted(playerStats.getCleanJobsCompleted() + 1);
+        }
 
         completed = true;
 

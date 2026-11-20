@@ -58,9 +58,9 @@ public class GameScreen extends ScreenAdapter {
         taxi = new Taxi(graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getX(),  graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getY(), inputHandeler);
         pathfinder = new Pathfinder(graph);
         upgradeManager = new UpgradeManager();
-        jobManager = new JobManager(graph, pathfinder, upgradeManager, 5);
-        randomEventManager = new RandomEventManager(graph);
         playerStats = new PlayerStats();
+        jobManager = new JobManager(graph, pathfinder, upgradeManager, 5, playerStats);
+        randomEventManager = new RandomEventManager(graph);
         miniMap = new MiniMap(city, taxi);
         npcManager = new NPCManager(graph, pathfinder, 0);
 
@@ -224,11 +224,11 @@ public class GameScreen extends ScreenAdapter {
         Job actvJob = jobManager.getActvJob();
         if (actvJob != null) {
             taxi.pickup(graph, actvJob);
-            taxi.dropoff(graph, actvJob);
+            taxi.dropoff(graph, actvJob, gameTime);
 
             if(actvJob.isCompleted()){
                 playerStats.addMoney(actvJob.getFinalPay());
-                playerStats.addJobCompleted(actvJob.getPatience(), actvJob.getActDist(), actvJob.getNumBuildingCollisions(), gameTime);
+                playerStats.addJobCompleted(actvJob.getPatience(), actvJob.getActDist(), actvJob.getNumBuildingCollisions(), gameTime, upgradeManager);
             }
         }
 
