@@ -24,11 +24,13 @@ public class NPC extends Car {
 
         this.graph = graph;
         this.pathfinder = pathfinder;
+        speed = 300f;
 
         currentNode = graph.getNodes().get(random.nextInt(graph.getNodes().size()));
 
         x = currentNode.getX();
         y = currentNode.getY();
+
 
         chooseDestination();
         updateHitbox();

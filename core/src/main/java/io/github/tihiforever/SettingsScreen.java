@@ -97,11 +97,11 @@ public class SettingsScreen extends ScreenAdapter {
 
         if (inputHandeler.isMouseClicked()) {
             if (easyButton.isClicked(mouseX, mouseY, true)) {
-                main.setDifficulty(Difficulty.EASY);
+                screenManager.getGameScreen().setDifficulty(Difficulty.EASY);
             } else if (normalButton.isClicked(mouseX, mouseY, true)) {
-                main.setDifficulty(Difficulty.NORMAL);
+                screenManager.getGameScreen().setDifficulty(Difficulty.NORMAL);
             } else if (hardButton.isClicked(mouseX, mouseY, true)) {
-                main.setDifficulty(Difficulty.HARD);
+                screenManager.getGameScreen().setDifficulty(Difficulty.HARD);
             } else if (smallResButton.isClicked(mouseX, mouseY, true)) {
                 Gdx.graphics.setWindowedMode(800, 600);
             } else if (medResButton.isClicked(mouseX, mouseY, true)) {
@@ -136,7 +136,7 @@ public class SettingsScreen extends ScreenAdapter {
         main.getFont().draw(main.getBatch(), "RESOLUTION", settingsStartX + columnWidth + columnWidth / 2f - 100f, (screenHeight / 2f) + 170f);
         main.getFont().draw(main.getBatch(), "PATHFINDING", settingsStartX + 2 * columnWidth + columnWidth / 2f - 100f, (screenHeight / 2f) + 170f);
         main.getFont().getData().setScale(1.5f);
-        main.getFont().draw(main.getBatch(), "Current: " + main.getDifficulty(), settingsStartX + columnWidth / 2f - 85f, hardButton.getY() - 40f);
+        main.getFont().draw(main.getBatch(), "Current: " + screenManager.getGameScreen().getDifficulty(), settingsStartX + columnWidth / 2f - 85f, hardButton.getY() - 40f);
         main.getFont().draw(main.getBatch(), "Current: " + (int)screenWidth + " x " + (int)screenHeight, settingsStartX + columnWidth + columnWidth / 2f - 100f, bigResButton.getY() - 40f);
         main.getFont().draw(main.getBatch(), "Current: " + pathfinderText, settingsStartX + columnWidth + columnWidth + columnWidth / 2f - 75f, hardButton.getY() - 40f);
 

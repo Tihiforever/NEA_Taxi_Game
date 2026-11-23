@@ -14,18 +14,20 @@ public class JobManager {
     private Graph graph;
     private Pathfinder pathfinder;
     private UpgradeManager upgradeManager;
+    private Difficulty difficulty;
 
     private int baseAmount;
     private int nextJobNumber = 1;
     private boolean rushHour = false;
 
-    public JobManager(Graph graph, Pathfinder pathfinder, UpgradeManager upgradeManager, int amount, PlayerStats playerStats) {
+    public JobManager(Graph graph, Pathfinder pathfinder, UpgradeManager upgradeManager, int amount, PlayerStats playerStats, Difficulty difficulty) {
         this.graph = graph;
         this.pathfinder = pathfinder;
         this.baseAmount = amount;
         this.upgradeManager = upgradeManager;
         jobs = new ArrayList<>();
         this.playerStats = playerStats;
+        this.difficulty = difficulty;
 
         for (int i = 0; i < amount; i++) {
             addJob();
@@ -58,6 +60,10 @@ public class JobManager {
         if (upgradeManager.hasUpgrade(Upgrades.FARES2)) fareMultiplier += 0.10f;
         if (upgradeManager.hasUpgrade(Upgrades.FARES3)) fareMultiplier += 0.15f;
         if (rushHour) fareMultiplier += 0.15f;
+
+        if (difficulty == Difficulty.EASY) fareMultiplier *= 1.2f;
+        if (difficulty == Difficulty.NORMAL) fareMultiplier *= 1f;
+        if (difficulty == Difficulty.HARD) fareMultiplier *= 0.8f;
 
         Job job = new Job(pickup, dropoff, graph, pathfinder, fareMultiplier, upgradeManager, playerStats);
         job.setJobNum(nextJobNumber);

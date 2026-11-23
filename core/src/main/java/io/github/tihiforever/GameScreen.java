@@ -33,6 +33,8 @@ public class GameScreen extends ScreenAdapter {
     private Node endNode;
     private ArrayList<Node> currentPath = new ArrayList<>();
 
+    private Difficulty difficulty;
+
     private float searchTimer = 0f;
     private float secondsPerStep = 0.15f;
     private boolean visualisationPaused = false;
@@ -56,6 +58,7 @@ public class GameScreen extends ScreenAdapter {
         this.main = main;
         inputHandeler = new InputHandeler();
         Gdx.input.setInputProcessor(inputHandeler);
+        difficulty = Difficulty.NORMAL;
 
         city = new City();
         graph = new Graph(city);
@@ -63,7 +66,7 @@ public class GameScreen extends ScreenAdapter {
         pathfinder = new Pathfinder(graph);
         upgradeManager = new UpgradeManager();
         playerStats = new PlayerStats();
-        jobManager = new JobManager(graph, pathfinder, upgradeManager, 5, playerStats);
+        jobManager = new JobManager(graph, pathfinder, upgradeManager, 5, playerStats, difficulty);
         randomEventManager = new RandomEventManager(graph);
         miniMap = new MiniMap(city, taxi);
         npcManager = new NPCManager(graph, pathfinder, graph.getNodes().size() / 2);
@@ -552,4 +555,6 @@ public class GameScreen extends ScreenAdapter {
     public PlayerStats getPlayerStats() {return playerStats;}
     public Taxi getTaxi() {return taxi;}
     public UpgradeManager getUpgradeManager() {return upgradeManager;}
+    public void setDifficulty(Difficulty difficulty) {this.difficulty = difficulty;}
+    public Difficulty getDifficulty() {return difficulty;}
 }
