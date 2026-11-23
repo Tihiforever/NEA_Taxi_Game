@@ -398,7 +398,7 @@ public class GameScreen extends ScreenAdapter {
             else if (achievementNotification == 2) achievementText = "Getting Somewhere - £200\n(Earn £200)";
             else if (achievementNotification == 3) achievementText = "Taxi Veteran - £1,000\n(Complete 100 jobs)";
             else if (achievementNotification == 4) achievementText = "Upgrade Monster - £5,000\n(Purchase all upgrades)";
-            else if (achievementNotification == 5) achievementText = "Night Owl - £200\n(Complete 10 jobs between 20:00–06:00)";
+            else if (achievementNotification == 5) achievementText = "Night Owl - £200\n(Complete 10 jobs between 20:00-06:00)";
             else if (achievementNotification == 6) achievementText = "Taxi Tycoon - £1000\n(Earn £10,000)";
             else if (achievementNotification == 7) achievementText = "Perfectionist - 500£\n(Reach at least 4.5 reputation)";
             else if (achievementNotification == 8) achievementText = "Busy Bee - £100\n(Complete 25 jobs)";
