@@ -25,7 +25,7 @@ public class UpgradeScreen extends ScreenAdapter {
     private final String[][] carEffects = {{"+10% maximum speed", "+15% acceleration", "+15% maximum speed"}, {"Improved grip and handling", "+15% turning responsiveness", "Improved cornering"}, {"Improved braking", "40% less collision penalties"}};
 
     private final String[][] businessUpgradeNames = {{"Premium Fare Meter", "VIP Service", "Executive Taxi"}, {"Extended Seating", "Passenger Comfort", "Premium Cab"}, {"Improved Radio", "Advanced Dispatch"}};
-    private final String[][] businessEffects = {{"+10% job fares", "+10% job fares", "+15% job fares"}, {"Accept another active job", "Slower patience loss", "Increased completion rewards"}, {"+5 available jobs", "10% long-distance job chance"}};
+    private final String[][] businessEffects = {{"+10% job fares", "+10% job fares", "+15% job fares"}, {"Accept another active job", "Slower patience loss", "Increased completion rewards"}, {"+5 available jobs", "30% long-distance job chance"}};
 
     private final float nodeWidth = 200f;
     private final float nodeHeight = 90f;

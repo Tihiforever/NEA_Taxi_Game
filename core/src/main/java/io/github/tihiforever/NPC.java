@@ -65,8 +65,6 @@ public class NPC extends Car {
 
         float distance = (float)Math.sqrt(tx * tx + ty * ty);
 
-        if (collisionTimer > 0) collisionTimer -= dt;
-
         if (distance <= 5) {
             currentWaypoint++;
 
@@ -84,24 +82,6 @@ public class NPC extends Car {
         }
 
         rotation = MathUtils.atan2(ty, tx) * MathUtils.radiansToDegrees;
-
-        if (collisionTimer <= 0f){
-            speed = 300f;
-
-            for (NPC npc : NPCManager.getNpcs()) {
-                if (npc == this) continue;
-
-                float dx = npc.x - x;
-                float dy = npc.y - y;
-
-                float ahead = dx * MathUtils.cosDeg(rotation) + dy * MathUtils.sinDeg(rotation);
-                float side = Math.abs(-dx * MathUtils.sinDeg(rotation) + dy * MathUtils.sinDeg(rotation));
-
-                if (ahead > 0 && ahead < 110 && side < 30) {
-                    speed = Math.max(0, Math.min(speed, (ahead - 35) * 4));
-                }
-            }
-        }
 
         x += MathUtils.cosDeg(rotation) * speed * dt;
         y += MathUtils.sinDeg(rotation) * speed * dt;

@@ -19,8 +19,8 @@ public class City {
     private int scaleSize;
 
     public City(){
-        mapSize = 20;
-        cellSize = 192;
+        mapSize = 24;
+        cellSize = 230;
         scaleSize = 2;
 
         random = new Random();
