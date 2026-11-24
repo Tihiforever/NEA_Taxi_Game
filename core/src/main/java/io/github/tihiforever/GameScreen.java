@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
+import java.nio.file.Path;
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -14,6 +16,7 @@ public class GameScreen extends ScreenAdapter {
     private Taxi taxi;
     private City city;
     private Graph graph;
+    private Graph NPCgraph;
     private Pathfinder pathfinder;
     private JobManager jobManager;
     private RandomEventManager randomEventManager;
@@ -21,6 +24,7 @@ public class GameScreen extends ScreenAdapter {
     private PlayerStats playerStats;
     private NPCManager npcManager;
     private UpgradeManager upgradeManager;
+    private Pathfinder NPCpathfinder;
 
     private OrthographicCamera camera;
     private OrthographicCamera hudCamera;
@@ -62,20 +66,24 @@ public class GameScreen extends ScreenAdapter {
 
         city = new City();
         graph = new Graph(city);
+        NPCgraph = new Graph(city);
         taxi = new Taxi(graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getX(),  graph.getClosestNode(city.getWorldWidth() / 2f, city.getWorldHeight() / 2f).getY(), inputHandeler);
         pathfinder = new Pathfinder(graph);
+        NPCpathfinder = new Pathfinder(NPCgraph);
         upgradeManager = new UpgradeManager();
         playerStats = new PlayerStats();
         jobManager = new JobManager(graph, pathfinder, upgradeManager, 5, playerStats, difficulty);
         randomEventManager = new RandomEventManager(graph);
         miniMap = new MiniMap(city, taxi);
-        npcManager = new NPCManager(graph, pathfinder, graph.getNodes().size() / 2);
+        npcManager = new NPCManager(graph, NPCpathfinder, graph.getNodes().size() / 3);
 
         startNode = graph.getClosestNode(taxi.getX(), taxi.getY());
         if (!graph.getNodes().isEmpty()) {
             endNode = graph.getNodes().get((int) (Math.random() * graph.getNodes().size()));
             pathfinder.startSearch(startNode, endNode);
         }
+
+        playerStats.addMoney(100000);
     }
 
     @Override
@@ -229,6 +237,7 @@ public class GameScreen extends ScreenAdapter {
         npcManager.update(delta);
 
         Job actvJob = jobManager.getActvJob();
+
         if (actvJob != null) {
             taxi.pickup(graph, actvJob);
             taxi.dropoff(graph, actvJob, gameTime);
@@ -236,6 +245,7 @@ public class GameScreen extends ScreenAdapter {
             if(actvJob.isCompleted()){
                 playerStats.addMoney(actvJob.getFinalPay());
                 playerStats.addJobCompleted(actvJob.getPatience(), actvJob.getActDist(), actvJob.getNumBuildingCollisions(), gameTime, upgradeManager);
+                actvJob = jobManager.getExtraJob();
             }
         }
 

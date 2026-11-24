@@ -141,9 +141,10 @@ public class MiniMap {
                     int rowB = (int) (b.getY() / city.getCellSize());
                     int colB = (int) (b.getX() / city.getCellSize());
 
-                    if (rowA < startRow || rowA >= cells.length || colA < startCol || colA >= cells[0].length || rowB < startRow || rowB >= cells.length || colB < startCol || colB >= cells[0].length) continue;
+                    if (rowA < startRow || rowA >= cells.length || colA < startCol || colA >= cells[0].length || rowB < startRow || rowB >= cells.length || colB < startCol || colB >= cells[0].length)
+                        continue;
 
-                    sr.rectLine(startX + (colA - startCol) * cellSize, startY + (rowA - startRow) * cellSize, startX + (colB - startCol) * cellSize, startY + (rowB - startRow) * cellSize, cellSize * 0.6f);
+                    sr.rectLine(startX + (a.getX() / city.getCellSize() - startCol) * cellSize, startY + (a.getY() / city.getCellSize() - startRow) * cellSize, startX + (b.getX() / city.getCellSize() - startCol) * cellSize, startY + (b.getY() / city.getCellSize() - startRow) * cellSize, cellSize * 0.6f);
                 }
             }
 
