@@ -11,7 +11,7 @@ public class NPCManager {
     public NPCManager(Graph graph, Pathfinder pathfinder, Taxi taxi, PlayerStats playerStats, int amount) {
         npcs = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
-            npcs.add(new NPC(graph, pathfinder, taxi, playerstats));
+            npcs.add(new NPC(graph, pathfinder, taxi, playerStats));
         }
     }
 

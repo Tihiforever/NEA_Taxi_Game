@@ -41,7 +41,7 @@ public class NPC extends Car {
         chooseDestination();
         updateHitbox();
 
-        if (random.nextFloat() < 0.05f) isPoPo = true;
+        if (random.nextFloat() < 0.1f) isPoPo = true;
         else isPoPo = false;
 
         hasBeenSeen = false;
@@ -101,6 +101,7 @@ public class NPC extends Car {
                         if (y + height / 2f + j >= taxi.getY()) {
                             if (taxi.getSpeed() > 700) {
                                 playerStats.addMoney((int) taxi.getSpeed() - 700);
+                                hasBeenSeen = true;
                             }
                         }
                     }
