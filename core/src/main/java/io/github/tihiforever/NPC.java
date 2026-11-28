@@ -20,9 +20,6 @@ public class NPC extends Car {
     private ArrayList<Node> path;
     private int currentWaypoint;
 
-    private boolean isPoPo;
-    private boolean hasBeenSeen;
-
     public NPC(Graph graph, Pathfinder pathfinder, Taxi taxi, PlayerStats playerStats) {
         super(0, 0);
 
@@ -40,11 +37,6 @@ public class NPC extends Car {
 
         chooseDestination();
         updateHitbox();
-
-        if (random.nextFloat() < 0.1f) isPoPo = true;
-        else isPoPo = false;
-
-        hasBeenSeen = false;
     }
 
     private void chooseDestination() {
@@ -94,21 +86,6 @@ public class NPC extends Car {
             ty = target.getY() - y;
         }
 
-        if (isPoPo) {
-            for (int i = 0; i < 1000; i++) {
-                for (int j = 0; j < 1000; j++) {
-                    if (x + width / 2f + i >= taxi.getX()){
-                        if (y + height / 2f + j >= taxi.getY()) {
-                            if (taxi.getSpeed() > 700) {
-                                playerStats.addMoney((int) taxi.getSpeed() - 700);
-                                hasBeenSeen = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         rotation = MathUtils.atan2(ty, tx) * MathUtils.radiansToDegrees;
 
         x += MathUtils.cosDeg(rotation) * speed * dt;
@@ -118,7 +95,6 @@ public class NPC extends Car {
     }
 
     public void draw(ShapeRenderer sr) {
-        if (isPoPo && !hasBeenSeen) super.draw(sr, Color.BLUE);
-        else super.draw(sr, Color.FIREBRICK);
+        super.draw(sr, Color.FIREBRICK);
     }
 }
